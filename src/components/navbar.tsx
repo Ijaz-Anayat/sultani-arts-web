@@ -34,7 +34,7 @@ export function Navbar() {
   return (
     <>
       <div className="hidden border-b border-line bg-ink text-ivory md:block">
-        <p className="mx-auto max-w-[1400px] px-6 py-2 text-center font-sans text-[0.68rem] tracking-[0.28em] uppercase">
+        <p className="mx-auto max-w-[1400px] px-4 py-2 text-center font-sans text-[0.62rem] tracking-[0.18em] uppercase sm:px-6 sm:text-[0.68rem] sm:tracking-[0.28em]">
           Complimentary framing consult · Worldwide insured shipping
         </p>
       </div>
@@ -46,7 +46,7 @@ export function Navbar() {
             : "border-transparent bg-ivory"
         }`}
       >
-        <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-4 px-5 py-4 md:px-8">
+        <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-2 px-4 py-3 sm:gap-4 sm:px-5 sm:py-4 md:px-8">
           <Logo />
 
           <nav className="hidden items-center gap-8 lg:flex">
@@ -61,7 +61,7 @@ export function Navbar() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="flex shrink-0 items-center gap-0.5 sm:gap-2">
             <button
               type="button"
               onClick={() => setSearchOpen((open) => !open)}
@@ -107,18 +107,18 @@ export function Navbar() {
           }`}
         >
           <form
-            className="mx-auto flex max-w-[1400px] items-center gap-3 px-5 py-4 md:px-8"
+            className="mx-auto flex max-w-[1400px] items-center gap-3 px-4 py-4 sm:px-5 md:px-8"
             onSubmit={(event) => {
               event.preventDefault();
               setSearchOpen(false);
             }}
           >
-            <Search size={16} className="text-muted" strokeWidth={1.5} />
+            <Search size={16} className="shrink-0 text-muted" strokeWidth={1.5} />
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search calligraphy, prints, commissions…"
-              className="w-full bg-transparent font-serif text-lg text-ink outline-none placeholder:text-muted/70"
+              placeholder="Search the collection…"
+              className="w-full min-w-0 bg-transparent font-serif text-base text-ink outline-none placeholder:text-muted/70 sm:text-lg"
             />
             <button
               type="button"
@@ -139,7 +139,7 @@ export function Navbar() {
         onClick={() => setMenuOpen(false)}
       />
       <aside
-        className={`fixed top-0 right-0 z-[70] flex h-full w-[min(88vw,380px)] flex-col bg-ivory px-7 py-6 shadow-2xl transition-transform duration-500 ease-out lg:hidden ${
+        className={`fixed top-0 right-0 z-[70] flex h-full w-[min(100vw,380px)] flex-col bg-ivory px-6 py-6 pt-[max(1.5rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-2xl transition-transform duration-500 ease-out lg:hidden sm:px-7 ${
           menuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -160,7 +160,7 @@ export function Navbar() {
               key={link.href}
               href={link.href}
               onClick={() => setMenuOpen(false)}
-              className="font-serif text-3xl text-ink transition-colors hover:text-gold-deep"
+              className="font-serif text-2xl text-ink transition-colors hover:text-gold-deep sm:text-3xl"
             >
               {link.label}
             </Link>
@@ -185,7 +185,7 @@ export function Navbar() {
         onClick={() => setCartOpen(false)}
       />
       <aside
-        className={`fixed top-0 right-0 z-[70] flex h-full w-[min(92vw,420px)] flex-col bg-ivory shadow-2xl transition-transform duration-500 ${
+        className={`fixed top-0 right-0 z-[70] flex h-full w-[min(100vw,420px)] flex-col bg-ivory pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)] shadow-2xl transition-transform duration-500 ${
           cartOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >

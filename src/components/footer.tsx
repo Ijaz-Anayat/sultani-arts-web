@@ -5,7 +5,7 @@ import { categories, navLinks } from "@/lib/data";
 export function Footer() {
   return (
     <footer id="contact" className="mt-8 border-t border-line bg-ink text-ivory">
-      <div className="mx-auto grid max-w-[1400px] gap-12 px-5 py-16 md:grid-cols-2 md:px-8 lg:grid-cols-4">
+      <div className="mx-auto grid max-w-[1400px] gap-10 px-4 py-12 sm:gap-12 sm:px-5 sm:py-16 md:grid-cols-2 md:px-8 lg:grid-cols-4">
         <div className="lg:col-span-1">
           <Logo variant="light" />
           <p className="mt-6 max-w-xs font-serif text-lg leading-relaxed text-ivory/75">
@@ -104,7 +104,7 @@ export function Footer() {
               <Mail size={16} className="text-gold-soft" />
               <a
                 href="mailto:studio@sultaniarts.com"
-                className="font-serif text-lg hover:text-gold-soft"
+                className="break-all font-serif text-lg hover:text-gold-soft"
               >
                 studio@sultaniarts.com
               </a>
@@ -114,11 +114,11 @@ export function Footer() {
       </div>
 
       <div className="border-t border-ivory/10">
-        <div className="mx-auto flex max-w-[1400px] flex-col items-center justify-between gap-3 px-5 py-5 text-center md:flex-row md:px-8 md:text-left">
-          <p className="font-sans text-[0.68rem] tracking-[0.18em] text-ivory/50 uppercase">
+        <div className="mx-auto flex max-w-[1400px] flex-col items-center justify-between gap-2 px-4 py-5 text-center sm:gap-3 md:flex-row md:px-8 md:text-left">
+          <p className="font-sans text-[0.62rem] tracking-[0.12em] text-ivory/50 uppercase sm:text-[0.68rem] sm:tracking-[0.18em]">
             © {new Date().getFullYear()} Sultani Arts. All rights reserved.
           </p>
-          <p className="font-sans text-[0.68rem] tracking-[0.18em] text-ivory/50 uppercase">
+          <p className="font-sans text-[0.62rem] tracking-[0.12em] text-ivory/50 uppercase sm:text-[0.68rem] sm:tracking-[0.18em]">
             Art · Calligraphy · Culture
           </p>
         </div>

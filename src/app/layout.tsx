@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Great_Vibes, Outfit } from "next/font/google";
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
@@ -27,6 +27,12 @@ export const metadata: Metadata = {
   title: "Sultani Arts | Calligraphy & Artistic Collections",
   description:
     "A modern atelier for Islamic and Arabic calligraphy, wall art, and custom artistic pieces. Where tradition meets contemporary design.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

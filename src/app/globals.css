@@ -35,12 +35,15 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
+  scroll-padding-top: 5.5rem;
 }
 
 body {
   background: var(--ivory);
   color: var(--ink);
   font-family: var(--font-outfit), system-ui, sans-serif;
+  overflow-x: hidden;
 }
 
 ::selection {

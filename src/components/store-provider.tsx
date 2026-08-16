@@ -128,8 +128,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     <StoreContext.Provider value={value}>
       {children}
       {toast && (
-        <div className="pointer-events-none fixed bottom-6 left-1/2 z-[80] -translate-x-1/2">
-          <p className="border border-gold/40 bg-ink px-5 py-2.5 font-sans text-xs tracking-[0.22em] text-ivory uppercase shadow-lg">
+        <div className="pointer-events-none fixed bottom-6 left-1/2 z-[80] w-[calc(100vw-2rem)] max-w-sm -translate-x-1/2 px-0 sm:w-auto">
+          <p className="border border-gold/40 bg-ink px-4 py-2.5 text-center font-sans text-[0.65rem] tracking-[0.16em] text-ivory uppercase shadow-lg sm:px-5 sm:text-xs sm:tracking-[0.22em]">
             {toast}
           </p>
         </div>

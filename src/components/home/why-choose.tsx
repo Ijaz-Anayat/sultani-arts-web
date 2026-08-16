@@ -5,24 +5,24 @@ const icons = [Award, Gem, PenTool, ShieldCheck];
 
 export function WhyChoose() {
   return (
-    <section className="px-5 py-20 md:px-8 md:py-28">
+    <section className="px-4 py-14 sm:px-5 sm:py-20 md:px-8 md:py-28">
       <div className="mx-auto max-w-[1400px]">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="font-sans text-[0.7rem] tracking-[0.36em] text-gold-deep uppercase">
+        <div className="mx-auto max-w-2xl px-2 text-center">
+          <p className="font-sans text-[0.65rem] tracking-[0.22em] text-gold-deep uppercase sm:text-[0.7rem] sm:tracking-[0.36em]">
             Why Sultani
           </p>
-          <h2 className="mt-3 font-serif text-4xl md:text-5xl">
+          <h2 className="mt-2 font-serif text-3xl text-pretty sm:mt-3 sm:text-4xl md:text-5xl">
             Why choose Sultani Arts
           </h2>
         </div>
 
-        <div className="mt-14 grid gap-px bg-line sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-8 grid gap-px bg-line sm:mt-14 sm:grid-cols-2 lg:grid-cols-4">
           {benefits.map((benefit, index) => {
             const Icon = icons[index];
             return (
               <article
                 key={benefit.title}
-                className="bg-ivory px-8 py-10 transition-colors hover:bg-cream/70"
+                className="bg-ivory px-5 py-8 transition-colors hover:bg-cream/70 sm:px-8 sm:py-10"
               >
                 <Icon
                   size={22}
