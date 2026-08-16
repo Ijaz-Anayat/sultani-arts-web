@@ -27,6 +27,10 @@ export const metadata: Metadata = {
   title: "Sultani Arts | Calligraphy & Artistic Collections",
   description:
     "A modern atelier for Islamic and Arabic calligraphy, wall art, and custom artistic pieces. Where tradition meets contemporary design.",
+  icons: {
+    icon: "/icon.svg",
+    apple: "/apple-icon",
+  },
 };
 
 export const viewport: Viewport = {

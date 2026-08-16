@@ -43,7 +43,7 @@ export function Hero() {
               href="#collection"
               className="inline-flex w-full items-center justify-center gap-2 border border-ivory/35 px-6 py-3.5 font-sans text-[0.68rem] tracking-[0.18em] text-ivory uppercase transition-colors hover:border-gold-soft hover:text-gold-soft sm:w-auto sm:px-7 sm:text-[0.72rem] sm:tracking-[0.28em]"
             >
-              View All Art OOOOOH
+              View All Art
             </Link>
           </div>
         </div>
