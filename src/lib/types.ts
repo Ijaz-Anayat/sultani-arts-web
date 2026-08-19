@@ -3,6 +3,7 @@ import type { OrderStatus } from "@/lib/constants";
 export type ProductSize = {
   label: string;
   price: number;
+  stock: number;
 };
 
 export type CategoryDTO = {

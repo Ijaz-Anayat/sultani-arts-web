@@ -6,6 +6,7 @@ import { Heart } from "lucide-react";
 import { PriceDisplay } from "@/components/price-display";
 import { useStore } from "@/components/store-provider";
 import { getDiscountedPrice } from "@/lib/pricing";
+import { findFirstAvailableSizeIndex, isSizeInStock } from "@/lib/product-sizes";
 import type { ProductDTO } from "@/lib/types";
 
 export function ProductCard({ product }: { product: ProductDTO }) {
@@ -15,14 +16,17 @@ export function ProductCard({ product }: { product: ProductDTO }) {
   const image = product.images[0] ?? "/images/hero.jpg";
   const categoryName =
     typeof product.category === "object" ? product.category.name : "";
-  const defaultSize = product.sizes[0];
+  const defaultSizeIndex = findFirstAvailableSizeIndex(product.sizes);
+  const defaultSize = product.sizes[defaultSizeIndex];
   const productDiscountPercent = product.discountPercent ?? 0;
   const fromOriginal = product.sizes.length
     ? Math.min(...product.sizes.map((entry) => entry.price))
     : 0;
+  const canAdd =
+    product.inStock && product.sizes.some((entry) => isSizeInStock(entry)) && defaultSize;
 
   function handleAdd() {
-    if (!defaultSize) return;
+    if (!defaultSize || !canAdd) return;
     const discountedPrice = getDiscountedPrice(
       defaultSize.price,
       globalDiscountPercent,
@@ -65,13 +69,15 @@ export function ProductCard({ product }: { product: ProductDTO }) {
             className={saved ? "fill-gold-deep" : ""}
           />
         </button>
-        <button
-          type="button"
-          onClick={handleAdd}
-          className="absolute inset-x-2 bottom-2 hidden bg-ink py-2.5 font-sans text-[0.62rem] tracking-[0.16em] text-ivory uppercase transition-all duration-300 hover:bg-gold-deep sm:inset-x-4 sm:bottom-4 sm:block sm:translate-y-0 sm:py-3 sm:text-[0.68rem] sm:tracking-[0.26em] sm:opacity-100 md:translate-y-3 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100"
-        >
-          Add to Cart
-        </button>
+        {canAdd ? (
+          <button
+            type="button"
+            onClick={handleAdd}
+            className="absolute inset-x-2 bottom-2 hidden bg-ink py-2.5 font-sans text-[0.62rem] tracking-[0.16em] text-ivory uppercase transition-all duration-300 hover:bg-gold-deep sm:inset-x-4 sm:bottom-4 sm:block sm:translate-y-0 sm:py-3 sm:text-[0.68rem] sm:tracking-[0.26em] sm:opacity-100 md:translate-y-3 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100"
+          >
+            Add to Cart
+          </button>
+        ) : null}
       </div>
       <p className="truncate font-sans text-[0.58rem] tracking-[0.12em] text-gold-deep uppercase sm:text-[0.65rem] sm:tracking-[0.22em]">
         {categoryName}
@@ -90,13 +96,19 @@ export function ProductCard({ product }: { product: ProductDTO }) {
           size="sm"
         />
       </p>
-      <button
-        type="button"
-        onClick={handleAdd}
-        className="mt-3 w-full bg-ink py-2.5 font-sans text-[0.62rem] tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-gold-deep sm:hidden"
-      >
-        Add to Cart
-      </button>
+      {canAdd ? (
+        <button
+          type="button"
+          onClick={handleAdd}
+          className="mt-3 w-full bg-ink py-2.5 font-sans text-[0.62rem] tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-gold-deep sm:hidden"
+        >
+          Add to Cart
+        </button>
+      ) : (
+        <p className="mt-3 font-sans text-[0.62rem] tracking-[0.14em] text-muted uppercase">
+          Out of stock
+        </p>
+      )}
     </article>
   );
 }

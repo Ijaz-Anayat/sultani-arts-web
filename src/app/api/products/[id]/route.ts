@@ -4,22 +4,11 @@ import { connectDB } from "@/lib/mongodb";
 import { getProductById } from "@/lib/queries";
 import { isValidObjectId } from "@/lib/utils";
 import { parseDiscountPercent } from "@/lib/pricing";
+import { parseSizes } from "@/lib/product-sizes";
 import { Category } from "@/models/Category";
 import { Product } from "@/models/Product";
 
 type RouteContext = { params: Promise<{ id: string }> };
-
-function parseSizes(raw: unknown) {
-  if (!Array.isArray(raw) || raw.length !== 3) return null;
-  const sizes = raw.map((item) => {
-    const row = item as { label?: string; price?: number | string };
-    return { label: String(row.label ?? "").trim(), price: Number(row.price) };
-  });
-  if (sizes.some((size) => !size.label || Number.isNaN(size.price) || size.price < 0)) {
-    return null;
-  }
-  return sizes;
-}
 
 export async function GET(_request: Request, context: RouteContext) {
   const { id } = await context.params;
@@ -78,7 +67,7 @@ export async function PUT(request: Request, context: RouteContext) {
     }
     if (!sizes) {
       return NextResponse.json(
-        { error: "Exactly 3 size options with labels and prices are required" },
+        { error: "Exactly 3 size options with labels, prices, and stock are required" },
         { status: 400 },
       );
     }

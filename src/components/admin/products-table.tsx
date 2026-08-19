@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { ProductDTO } from "@/lib/types";
 import { formatPrice, startingPrice } from "@/lib/pricing";
+import { getTotalStock } from "@/lib/product-sizes";
 
 export function ProductsTable({ products }: { products: ProductDTO[] }) {
   const router = useRouter();
@@ -28,6 +29,7 @@ export function ProductsTable({ products }: { products: ProductDTO[] }) {
             <th className="px-4 py-3">From</th>
             <th className="px-4 py-3">Discount</th>
             <th className="px-4 py-3">Stock</th>
+            <th className="px-4 py-3">Status</th>
             <th className="px-4 py-3" />
           </tr>
         </thead>
@@ -42,7 +44,14 @@ export function ProductsTable({ products }: { products: ProductDTO[] }) {
               <td className="px-4 py-3 text-sm text-muted">
                 {product.discountPercent ? `${product.discountPercent}%` : "—"}
               </td>
-              <td className="px-4 py-3">{product.inStock ? "In stock" : "Hidden"}</td>
+              <td className="px-4 py-3 text-sm">{getTotalStock(product.sizes)} units</td>
+              <td className="px-4 py-3 text-sm text-muted">
+                {!product.inStock
+                  ? "Hidden"
+                  : getTotalStock(product.sizes) > 0
+                    ? "Available"
+                    : "Out of stock"}
+              </td>
               <td className="px-4 py-3 text-right">
                 <Link
                   href={`/admin/products/${product._id}/edit`}

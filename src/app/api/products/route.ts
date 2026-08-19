@@ -7,25 +7,7 @@ import { Product } from "@/models/Product";
 import { Category } from "@/models/Category";
 import { isValidObjectId } from "@/lib/utils";
 import { parseDiscountPercent } from "@/lib/pricing";
-
-function parseSizes(raw: unknown) {
-  if (!Array.isArray(raw) || raw.length !== 3) {
-    return null;
-  }
-
-  const sizes = raw.map((item) => {
-    const row = item as { label?: string; price?: number | string };
-    const label = String(row.label ?? "").trim();
-    const price = Number(row.price);
-    return { label, price };
-  });
-
-  if (sizes.some((size) => !size.label || Number.isNaN(size.price) || size.price < 0)) {
-    return null;
-  }
-
-  return sizes;
-}
+import { parseSizes } from "@/lib/product-sizes";
 
 export async function GET(request: NextRequest) {
   try {
@@ -72,7 +54,7 @@ export async function POST(request: Request) {
     }
     if (!sizes) {
       return NextResponse.json(
-        { error: "Exactly 3 size options with labels and prices are required" },
+        { error: "Exactly 3 size options with labels, prices, and stock are required" },
         { status: 400 },
       );
     }

@@ -21,7 +21,9 @@ export async function Footer() {
           </p>
           <div className="mt-6 flex gap-3">
             <a
-              href="#"
+              href="https://www.instagram.com/sultaniarts010?igsh=ejJibGhtam1hb3Bl"
+              target="_blank"
+              rel="noopener noreferrer"
               aria-label="Instagram"
               className="flex h-10 w-10 items-center justify-center border border-ivory/15 text-ivory/80 transition-colors hover:border-gold-soft hover:text-gold-soft"
             >
@@ -32,7 +34,9 @@ export async function Footer() {
               </svg>
             </a>
             <a
-              href="#"
+              href="https://www.facebook.com/profile.php?id=61593303458306"
+              target="_blank"
+              rel="noopener noreferrer"
               aria-label="Facebook"
               className="flex h-10 w-10 items-center justify-center border border-ivory/15 text-ivory/80 transition-colors hover:border-gold-soft hover:text-gold-soft"
             >
@@ -110,10 +114,10 @@ export async function Footer() {
             <li className="flex items-center gap-3">
               <Mail size={16} className="text-gold-soft" />
               <a
-                href="mailto:studio@sultaniarts.com"
+                href="mailto:team.sultaniarts@gmail.com"
                 className="break-all font-serif text-lg hover:text-gold-soft"
               >
-                studio@sultaniarts.com
+                team.sultaniarts@gmail.com
               </a>
             </li>
           </ul>

@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/mongodb";
 import { isValidObjectId, serialize } from "@/lib/utils";
 import { getDiscountedPrice } from "@/lib/pricing";
 import { getGlobalDiscountPercent } from "@/lib/queries";
+import { getSizeStock } from "@/lib/product-sizes";
 import { Order } from "@/models/Order";
 import { Product } from "@/models/Product";
 
@@ -57,6 +58,8 @@ export async function POST(request: Request) {
     const globalDiscountPercent = await getGlobalDiscountPercent();
 
     const items = [];
+    const stockUpdates: Array<{ productId: string; sizeLabel: string; quantity: number }> = [];
+
     for (const item of body.items) {
       const quantity = Math.max(1, Math.floor(Number(item.quantity) || 0));
       if (!item.productId || !isValidObjectId(item.productId) || !item.size || quantity < 1) {
@@ -68,10 +71,27 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "A product in the cart is no longer available" }, { status: 400 });
       }
 
+      if (!product.inStock) {
+        return NextResponse.json(
+          { error: `${product.title} is currently unavailable` },
+          { status: 400 },
+        );
+      }
+
       const size = product.sizes.find((entry) => entry.label === item.size);
       if (!size) {
         return NextResponse.json(
           { error: `Size "${item.size}" is not available for ${product.title}` },
+          { status: 400 },
+        );
+      }
+
+      const availableStock = getSizeStock(size);
+      if (availableStock < quantity) {
+        return NextResponse.json(
+          {
+            error: `Only ${availableStock} left in stock for ${product.title} (${size.label})`,
+          },
           { status: 400 },
         );
       }
@@ -90,6 +110,12 @@ export async function POST(request: Request) {
         price: unitPrice,
         quantity,
       });
+
+      stockUpdates.push({
+        productId: String(product._id),
+        sizeLabel: size.label,
+        quantity,
+      });
     }
 
     const totalAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -100,6 +126,18 @@ export async function POST(request: Request) {
       totalAmount,
       status: "pending",
     });
+
+    for (const update of stockUpdates) {
+      const productDoc = await Product.findById(update.productId);
+      if (!productDoc) continue;
+
+      const sizeEntry = productDoc.sizes.find((entry) => entry.label === update.sizeLabel);
+      if (!sizeEntry) continue;
+
+      sizeEntry.stock = Math.max(0, getSizeStock(sizeEntry) - update.quantity);
+      productDoc.inStock = productDoc.sizes.some((entry) => getSizeStock(entry) > 0);
+      await productDoc.save();
+    }
 
     return NextResponse.json(order, { status: 201 });
   } catch (err) {

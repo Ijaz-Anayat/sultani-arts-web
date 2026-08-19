@@ -17,8 +17,8 @@ export default async function ProductPage({
   if (!product) notFound();
 
   return (
-    <main className="flex-1 px-4 py-12 sm:px-5 sm:py-16 md:px-8">
-      <div className="mx-auto max-w-[1400px]">
+    <main className="flex-1 px-4 py-10 sm:px-5 sm:py-12 md:px-8">
+      <div className="mx-auto max-w-5xl">
         <ProductDetails product={product} />
       </div>
     </main>

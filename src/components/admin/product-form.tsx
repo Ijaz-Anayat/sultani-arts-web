@@ -21,7 +21,7 @@ export function ProductForm({ categories, product }: Props) {
   const [images, setImages] = useState<string[]>(product?.images ?? []);
   const [sizes, setSizes] = useState<ProductSize[]>(
     product?.sizes?.length === 3
-      ? product.sizes
+      ? product.sizes.map((size) => ({ ...size, stock: size.stock ?? 0 }))
       : DEFAULT_SIZES.map((size) => ({ ...size })),
   );
   const [inStock, setInStock] = useState(product?.inStock ?? true);
@@ -169,11 +169,11 @@ export function ProductForm({ categories, product }: Props) {
           Sizes & prices
         </p>
         <p className="mt-1 mb-4 font-sans text-sm text-muted">
-          Each product needs 3 size options. Shop and cart use the price you enter for the selected size.
+          Each product needs 3 size options with price (PKR) and stock count per size.
         </p>
         <div className="space-y-4">
           {sizes.map((size, index) => (
-            <div key={index} className="grid gap-3 sm:grid-cols-2">
+            <div key={index} className="grid gap-3 sm:grid-cols-3">
               <label className="block">
                 <span className="font-sans text-[0.65rem] tracking-[0.2em] text-muted uppercase">
                   Size {index + 1}
@@ -220,6 +220,29 @@ export function ProductForm({ categories, product }: Props) {
                   />
                 </div>
               </label>
+              <label className="block">
+                <span className="font-sans text-[0.65rem] tracking-[0.2em] text-muted uppercase">
+                  Stock
+                </span>
+                <input
+                  required
+                  type="number"
+                  min="0"
+                  step="1"
+                  placeholder="0"
+                  value={size.stock ?? 0}
+                  onChange={(event) =>
+                    setSizes((current) =>
+                      current.map((item, itemIndex) =>
+                        itemIndex === index
+                          ? { ...item, stock: Math.max(0, Number(event.target.value) || 0) }
+                          : item,
+                      ),
+                    )
+                  }
+                  className="mt-2 w-full border border-line bg-ivory px-4 py-3 outline-none focus:border-gold"
+                />
+              </label>
             </div>
           ))}
         </div>
@@ -253,7 +276,7 @@ export function ProductForm({ categories, product }: Props) {
           checked={inStock}
           onChange={(event) => setInStock(event.target.checked)}
         />
-        In stock
+        Visible on shop
       </label>
 
       {error ? <p className="text-sm text-gold-deep">{error}</p> : null}

@@ -1,7 +1,7 @@
 export const DEFAULT_SIZES = [
-  { label: "Small (12x16 in)", price: 0 },
-  { label: "Medium (16x20 in)", price: 0 },
-  { label: "Large (20x24 in)", price: 0 },
+  { label: "Small (12x16 in)", price: 0, stock: 0 },
+  { label: "Medium (16x20 in)", price: 0, stock: 0 },
+  { label: "Large (20x24 in)", price: 0, stock: 0 },
 ] as const;
 
 export const ORDER_STATUSES = [
