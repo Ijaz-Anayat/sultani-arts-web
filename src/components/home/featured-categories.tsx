@@ -1,8 +1,19 @@
 import Image from "next/image";
-import { categories } from "@/lib/data";
+import Link from "next/link";
+import { getCategories } from "@/lib/queries";
+import type { CategoryDTO } from "@/lib/types";
 
-export function FeaturedCategories() {
-  const [featured, second, ...rest] = categories;
+export async function FeaturedCategories() {
+  let categories: CategoryDTO[] = [];
+  try {
+    categories = await getCategories();
+  } catch {
+    categories = [];
+  }
+
+  const featured = categories[0];
+  const second = categories[1];
+  const rest = categories.slice(2);
 
   return (
     <section id="categories" className="px-4 py-14 sm:px-5 sm:py-20 md:px-8 md:py-28">
@@ -22,23 +33,33 @@ export function FeaturedCategories() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-12 md:gap-5">
-          <CategoryCard
-            category={featured}
-            className="col-span-2 min-h-[240px] sm:min-h-[320px] md:col-span-7 md:min-h-[480px]"
-          />
-          <CategoryCard
-            category={second}
-            className="col-span-2 min-h-[200px] sm:min-h-[260px] md:col-span-5 md:min-h-[480px]"
-          />
-          {rest.map((category) => (
-            <CategoryCard
-              key={category.id}
-              category={category}
-              className="col-span-1 min-h-[180px] sm:min-h-[220px] md:col-span-6 md:min-h-[240px] lg:col-span-3"
-            />
-          ))}
-        </div>
+        {categories.length === 0 ? (
+          <p className="font-serif text-lg text-muted">
+            Categories will appear here after the atelier catalogue is seeded.
+          </p>
+        ) : (
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-12 md:gap-5">
+            {featured ? (
+              <CategoryCard
+                category={featured}
+                className="col-span-2 min-h-[240px] sm:min-h-[320px] md:col-span-7 md:min-h-[480px]"
+              />
+            ) : null}
+            {second ? (
+              <CategoryCard
+                category={second}
+                className="col-span-2 min-h-[200px] sm:min-h-[260px] md:col-span-5 md:min-h-[480px]"
+              />
+            ) : null}
+            {rest.map((category) => (
+              <CategoryCard
+                key={category._id}
+                category={category}
+                className="col-span-1 min-h-[180px] sm:min-h-[220px] md:col-span-6 md:min-h-[240px] lg:col-span-3"
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
@@ -48,16 +69,16 @@ function CategoryCard({
   category,
   className,
 }: {
-  category: (typeof categories)[number];
+  category: CategoryDTO;
   className?: string;
 }) {
   return (
-    <a
-      href="#collection"
+    <Link
+      href={`/shop?category=${category.slug}`}
       className={`group relative block overflow-hidden bg-cream ${className ?? ""}`}
     >
       <Image
-        src={category.image}
+        src={category.image || "/images/hero.jpg"}
         alt={category.name}
         fill
         className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
@@ -66,7 +87,7 @@ function CategoryCard({
       <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/20 to-transparent" />
       <div className="absolute inset-x-0 bottom-0 p-3 sm:p-5 md:p-6">
         <p className="font-sans text-[0.58rem] tracking-[0.16em] text-gold-soft uppercase sm:text-[0.65rem] sm:tracking-[0.28em]">
-          {category.pieces} pieces
+          {category.productCount ?? 0} pieces
         </p>
         <h3 className="mt-1 font-serif text-[1.15rem] leading-snug text-ivory sm:text-2xl md:text-[1.7rem]">
           {category.name}
@@ -75,6 +96,6 @@ function CategoryCard({
           Enter collection
         </span>
       </div>
-    </a>
+    </Link>
   );
 }

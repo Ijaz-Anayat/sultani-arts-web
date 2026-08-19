@@ -4,12 +4,15 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Menu, Search, ShoppingBag, User, X } from "lucide-react";
+import { useSession, signOut } from "next-auth/react";
 import { Logo } from "@/components/logo";
 import { useStore } from "@/components/store-provider";
 import { navLinks } from "@/lib/data";
 
 export function Navbar() {
   const { cart, cartCount, cartOpen, setCartOpen, removeFromCart } = useStore();
+  const { data: session } = useSession();
+  const isAdmin = session?.user?.role === "admin";
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -70,13 +73,23 @@ export function Navbar() {
             >
               <Search size={18} strokeWidth={1.5} />
             </button>
-            <button
-              type="button"
-              className="hidden h-10 w-10 items-center justify-center text-ink-soft transition-colors hover:text-gold-deep sm:flex"
-              aria-label="Account"
-            >
-              <User size={18} strokeWidth={1.5} />
-            </button>
+            {isAdmin ? (
+              <Link
+                href="/admin/dashboard"
+                className="hidden h-10 w-10 items-center justify-center text-ink-soft transition-colors hover:text-gold-deep sm:flex"
+                aria-label="Admin dashboard"
+              >
+                <User size={18} strokeWidth={1.5} />
+              </Link>
+            ) : (
+              <Link
+                href="/admin/login"
+                className="hidden h-10 w-10 items-center justify-center text-ink-soft transition-colors hover:text-gold-deep sm:flex"
+                aria-label="Admin login"
+              >
+                <User size={18} strokeWidth={1.5} />
+              </Link>
+            )}
             <button
               type="button"
               onClick={() => setCartOpen(true)}
@@ -166,13 +179,34 @@ export function Navbar() {
             </Link>
           ))}
         </nav>
-        <button
-          type="button"
-          className="mt-8 flex items-center gap-3 font-sans text-[0.75rem] tracking-[0.22em] text-muted uppercase"
-        >
-          <User size={16} strokeWidth={1.5} />
-          Account
-        </button>
+        {isAdmin ? (
+          <div className="mt-8 flex flex-col gap-3">
+            <Link
+              href="/admin/dashboard"
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center gap-3 font-sans text-[0.75rem] tracking-[0.22em] text-muted uppercase"
+            >
+              <User size={16} strokeWidth={1.5} />
+              Dashboard
+            </Link>
+            <button
+              type="button"
+              onClick={() => signOut({ callbackUrl: "/" })}
+              className="flex items-center gap-3 font-sans text-[0.75rem] tracking-[0.22em] text-gold-deep uppercase"
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <Link
+            href="/admin/login"
+            onClick={() => setMenuOpen(false)}
+            className="mt-8 flex items-center gap-3 font-sans text-[0.75rem] tracking-[0.22em] text-muted uppercase"
+          >
+            <User size={16} strokeWidth={1.5} />
+            Studio login
+          </Link>
+        )}
         <p className="mt-auto border-t border-line pt-6 font-sans text-xs tracking-[0.2em] text-muted uppercase">
           Atelier of written art
         </p>
@@ -207,11 +241,11 @@ export function Navbar() {
           ) : (
             <ul className="space-y-5">
               {cart.map((item) => (
-                <li key={item.id} className="flex gap-4">
+                <li key={`${item.productId}-${item.size}`} className="flex gap-4">
                   <div className="relative h-20 w-16 overflow-hidden bg-cream">
                     <Image
                       src={item.image}
-                      alt={item.name}
+                      alt={item.title}
                       fill
                       className="object-cover"
                       sizes="64px"
@@ -219,14 +253,14 @@ export function Navbar() {
                   </div>
                   <div className="flex-1">
                     <p className="font-serif text-[1.05rem] leading-snug">
-                      {item.name}
+                      {item.title}
                     </p>
                     <p className="mt-1 text-sm text-muted">
-                      Qty {item.quantity} · ${item.price}
+                      {item.size} · Qty {item.quantity} · ${item.price}
                     </p>
                     <button
                       type="button"
-                      onClick={() => removeFromCart(item.id)}
+                      onClick={() => removeFromCart(item.productId, item.size)}
                       className="mt-1 text-xs tracking-wide text-gold-deep uppercase hover:underline"
                     >
                       Remove
@@ -243,12 +277,13 @@ export function Navbar() {
               <span>Subtotal</span>
               <span>${total.toFixed(0)}</span>
             </div>
-            <button
-              type="button"
-              className="w-full bg-ink py-3.5 font-sans text-xs tracking-[0.28em] text-ivory uppercase transition-colors hover:bg-gold-deep"
+            <Link
+              href="/checkout"
+              onClick={() => setCartOpen(false)}
+              className="block w-full bg-ink py-3.5 text-center font-sans text-xs tracking-[0.28em] text-ivory uppercase transition-colors hover:bg-gold-deep"
             >
               Checkout
-            </button>
+            </Link>
           </div>
         )}
       </aside>

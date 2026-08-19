@@ -1,9 +1,10 @@
+/** Seed / design reference only — live catalogue comes from MongoDB. */
 export const navLinks = [
   { href: "/", label: "Home" },
-  { href: "#collection", label: "Shop" },
-  { href: "#categories", label: "Categories" },
-  { href: "#about", label: "About" },
-  { href: "#contact", label: "Contact" },
+  { href: "/shop", label: "Shop" },
+  { href: "/#categories", label: "Categories" },
+  { href: "/#about", label: "About" },
+  { href: "/#contact", label: "Contact" },
 ] as const;
 
 export const categories = [

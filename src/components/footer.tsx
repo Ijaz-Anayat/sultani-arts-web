@@ -1,8 +1,15 @@
 import { Mail, MapPin, Phone } from "lucide-react";
 import { Logo } from "@/components/logo";
-import { categories, navLinks } from "@/lib/data";
+import { navLinks } from "@/lib/data";
+import { getCategories } from "@/lib/queries";
 
-export function Footer() {
+export async function Footer() {
+  let categories: Awaited<ReturnType<typeof getCategories>> = [];
+  try {
+    categories = await getCategories();
+  } catch {
+    categories = [];
+  }
   return (
     <footer id="contact" className="mt-8 border-t border-line bg-ink text-ivory">
       <div className="mx-auto grid max-w-[1400px] gap-10 px-4 py-12 sm:gap-12 sm:px-5 sm:py-16 md:grid-cols-2 md:px-8 lg:grid-cols-4">
@@ -69,9 +76,9 @@ export function Footer() {
           </h3>
           <ul className="mt-5 space-y-3">
             {categories.map((category) => (
-              <li key={category.id}>
+              <li key={category._id}>
                 <a
-                  href="#categories"
+                  href={`/shop?category=${category.slug}`}
                   className="font-serif text-lg text-ivory/80 transition-colors hover:text-gold-soft"
                 >
                   {category.name}

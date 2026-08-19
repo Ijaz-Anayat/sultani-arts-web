@@ -4,40 +4,61 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
 } from "react";
-import type { Product } from "@/lib/data";
-
-type CartItem = {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-  quantity: number;
-};
+import { CART_STORAGE_KEY, WISHLIST_STORAGE_KEY } from "@/lib/constants";
+import type { CartItem } from "@/lib/types";
 
 type StoreContextValue = {
   cart: CartItem[];
   wishlist: string[];
   cartCount: number;
-  addToCart: (product: Product) => void;
-  removeFromCart: (id: string) => void;
+  addToCart: (item: Omit<CartItem, "quantity"> & { quantity?: number }) => void;
+  removeFromCart: (productId: string, size: string) => void;
   toggleWishlist: (id: string) => void;
   isWishlisted: (id: string) => boolean;
   cartOpen: boolean;
   setCartOpen: (open: boolean) => void;
+  clearCart: () => void;
   toast: string | null;
 };
 
 const StoreContext = createContext<StoreContextValue | null>(null);
+
+function readStorage<T>(key: string, fallback: T): T {
+  try {
+    const raw = window.localStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as T) : fallback;
+  } catch {
+    return fallback;
+  }
+}
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    setCart(readStorage<CartItem[]>(CART_STORAGE_KEY, []));
+    setWishlist(readStorage<string[]>(WISHLIST_STORAGE_KEY, []));
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+  }, [cart, hydrated]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    window.localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(wishlist));
+  }, [wishlist, hydrated]);
 
   const showToast = useCallback((message: string) => {
     setToast(message);
@@ -45,24 +66,28 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const addToCart = useCallback(
-    (product: Product) => {
+    (item: Omit<CartItem, "quantity"> & { quantity?: number }) => {
+      const quantity = item.quantity ?? 1;
       setCart((current) => {
-        const existing = current.find((item) => item.id === product.id);
+        const existing = current.find(
+          (entry) => entry.productId === item.productId && entry.size === item.size,
+        );
         if (existing) {
-          return current.map((item) =>
-            item.id === product.id
-              ? { ...item, quantity: item.quantity + 1 }
-              : item,
+          return current.map((entry) =>
+            entry.productId === item.productId && entry.size === item.size
+              ? { ...entry, quantity: entry.quantity + quantity }
+              : entry,
           );
         }
         return [
           ...current,
           {
-            id: product.id,
-            name: product.name,
-            price: product.price,
-            image: product.image,
-            quantity: 1,
+            productId: item.productId,
+            title: item.title,
+            image: item.image,
+            size: item.size,
+            price: item.price,
+            quantity,
           },
         ];
       });
@@ -71,9 +96,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     [showToast],
   );
 
-  const removeFromCart = useCallback((id: string) => {
-    setCart((current) => current.filter((item) => item.id !== id));
+  const removeFromCart = useCallback((productId: string, size: string) => {
+    setCart((current) =>
+      current.filter((item) => !(item.productId === productId && item.size === size)),
+    );
   }, []);
+
+  const clearCart = useCallback(() => setCart([]), []);
 
   const toggleWishlist = useCallback(
     (id: string) => {
@@ -109,6 +138,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       isWishlisted,
       cartOpen,
       setCartOpen,
+      clearCart,
       toast,
     }),
     [
@@ -120,6 +150,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       toggleWishlist,
       isWishlisted,
       cartOpen,
+      clearCart,
       toast,
     ],
   );

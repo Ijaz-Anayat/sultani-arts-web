@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
+import type { ReactNode } from "react";
 import { Cormorant_Garamond, Great_Vibes, Outfit } from "next/font/google";
-import { Footer } from "@/components/footer";
-import { Navbar } from "@/components/navbar";
+import { AuthSessionProvider } from "@/components/auth-session-provider";
 import { StoreProvider } from "@/components/store-provider";
 import "./globals.css";
 
@@ -39,18 +39,16 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="en"
       className={`${cormorant.variable} ${outfit.variable} ${greatVibes.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-ivory font-sans text-ink">
-        <StoreProvider>
-          <Navbar />
-          {children}
-          <Footer />
-        </StoreProvider>
+        <AuthSessionProvider>
+          <StoreProvider>{children}</StoreProvider>
+        </AuthSessionProvider>
       </body>
     </html>
   );

@@ -5,10 +5,25 @@ import { FormEvent, useState } from "react";
 export function Newsletter() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
+  const [pending, setPending] = useState(false);
 
-  const onSubmit = (event: FormEvent) => {
+  const onSubmit = async (event: FormEvent) => {
     event.preventDefault();
     if (!email.trim()) return;
+    setPending(true);
+    setError("");
+    const response = await fetch("/api/newsletter", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    setPending(false);
+    if (!response.ok) {
+      const body = (await response.json()) as { error?: string };
+      setError(body.error || "Could not subscribe");
+      return;
+    }
     setSubmitted(true);
   };
 
@@ -45,12 +60,14 @@ export function Newsletter() {
             />
             <button
               type="submit"
-              className="bg-ink px-7 py-3.5 font-sans text-[0.68rem] tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-gold-deep sm:text-[0.72rem] sm:tracking-[0.26em]"
+              disabled={pending}
+              className="bg-ink px-7 py-3.5 font-sans text-[0.68rem] tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-gold-deep sm:text-[0.72rem] sm:tracking-[0.26em] disabled:opacity-60"
             >
-              Subscribe
+              {pending ? "Saving…" : "Subscribe"}
             </button>
           </form>
         )}
+        {error ? <p className="mt-3 text-sm text-gold-deep">{error}</p> : null}
       </div>
     </section>
   );
