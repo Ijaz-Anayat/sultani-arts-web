@@ -9,6 +9,7 @@ export function AdminLoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -56,14 +57,26 @@ export function AdminLoginForm() {
             <span className="font-sans text-[0.65rem] tracking-[0.2em] text-muted uppercase">
               Password
             </span>
-            <input
-              type="password"
-              required
-              autoComplete="current-password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              className="mt-2 w-full border border-line bg-ivory px-4 py-3 font-sans text-ink outline-none focus:border-gold"
-            />
+            <div className="mt-2 flex border border-line bg-ivory focus-within:border-gold">
+              <input
+                type={showPassword ? "text" : "password"}
+                required
+                autoComplete="current-password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                className="min-w-0 flex-1 bg-transparent px-4 py-3 font-sans text-ink outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((open) => !open)}
+                className="px-3 font-sans text-[0.62rem] tracking-[0.16em] text-muted uppercase"
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
+            <p className="mt-2 font-sans text-[0.7rem] text-muted">
+              {password.length} characters · paste the 16-character password, do not type it
+            </p>
           </label>
           {error ? <p className="font-sans text-sm text-gold-deep">{error}</p> : null}
           <button
