@@ -14,14 +14,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const email =
-          typeof credentials?.email === "string"
-            ? credentials.email.trim().toLowerCase()
-            : "";
-        const password =
-          typeof credentials?.password === "string" ? credentials.password : "";
+        const rawEmail = credentials?.email;
+        const rawPassword = credentials?.password;
+        const email = (Array.isArray(rawEmail) ? rawEmail[0] : rawEmail)
+          ?.toString()
+          .trim()
+          .toLowerCase();
+        const password = (Array.isArray(rawPassword) ? rawPassword[0] : rawPassword)?.toString();
 
         if (!email || !password) {
+          console.error("Admin login missing credentials");
           return null;
         }
 
