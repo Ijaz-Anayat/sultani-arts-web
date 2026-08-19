@@ -4,7 +4,7 @@ import { RevealOnScroll } from "@/components/reveal-on-scroll";
 import { getCategories } from "@/lib/queries";
 import type { CategoryDTO } from "@/lib/types";
 
-export async function FeaturedCategories() {
+export async function FeaturedCategories({ compact = false }: { compact?: boolean }) {
   let categories: CategoryDTO[] = [];
   try {
     categories = await getCategories();
@@ -16,25 +16,39 @@ export async function FeaturedCategories() {
   const second = categories[1];
   const rest = categories.slice(2);
 
+  const heights = compact
+    ? {
+        featured: "col-span-2 min-h-[180px] sm:min-h-[220px] md:col-span-7 md:min-h-[320px]",
+        second: "col-span-2 min-h-[160px] sm:min-h-[200px] md:col-span-5 md:min-h-[320px]",
+        rest: "col-span-1 min-h-[140px] sm:min-h-[170px] md:col-span-6 md:min-h-[180px] lg:col-span-3",
+      }
+    : {
+        featured: "col-span-2 min-h-[200px] sm:min-h-[260px] md:col-span-7 md:min-h-[380px]",
+        second: "col-span-2 min-h-[180px] sm:min-h-[220px] md:col-span-5 md:min-h-[380px]",
+        rest: "col-span-1 min-h-[160px] sm:min-h-[190px] md:col-span-6 md:min-h-[200px] lg:col-span-3",
+      };
+
   return (
-    <section id="categories" className="px-4 py-14 sm:px-5 sm:py-20 md:px-8 md:py-28">
-      <div className="mx-auto max-w-[1400px]">
-        <RevealOnScroll>
-          <div className="mb-8 flex flex-col justify-between gap-3 sm:mb-12 md:mb-16 md:flex-row md:items-end md:gap-4">
-          <div>
-            <p className="font-sans text-[0.65rem] tracking-[0.22em] text-gold-deep uppercase sm:text-[0.7rem] sm:tracking-[0.36em]">
-              The Gallery
-            </p>
-            <h2 className="mt-2 font-serif text-3xl sm:mt-3 sm:text-4xl md:text-5xl">
-              Featured categories
-            </h2>
-          </div>
-          <p className="max-w-md font-sans text-sm leading-7 text-muted md:text-right">
-            From sacred verse to contemporary composition — each collection is
-            curated for presence, not volume.
-          </p>
-          </div>
-        </RevealOnScroll>
+    <section id="categories" className={`px-4 sm:px-5 md:px-8 ${compact ? "pb-14 pt-2 md:pb-20" : "py-14 md:py-28"}`}>
+      <div className="mx-auto max-w-[1200px]">
+        {!compact ? (
+          <RevealOnScroll>
+            <div className="mb-8 flex flex-col justify-between gap-3 sm:mb-12 md:mb-16 md:flex-row md:items-end md:gap-4">
+              <div>
+                <p className="font-sans text-[0.65rem] tracking-[0.22em] text-gold-deep uppercase sm:text-[0.7rem] sm:tracking-[0.36em]">
+                  The Gallery
+                </p>
+                <h2 className="mt-2 font-serif text-3xl sm:mt-3 sm:text-4xl md:text-5xl">
+                  Featured categories
+                </h2>
+              </div>
+              <p className="max-w-md font-sans text-sm leading-7 text-muted md:text-right">
+                From sacred verse to contemporary composition — each collection is
+                curated for presence, not volume.
+              </p>
+            </div>
+          </RevealOnScroll>
+        ) : null}
 
         {categories.length === 0 ? (
           <p className="font-serif text-lg text-muted">
@@ -43,24 +57,16 @@ export async function FeaturedCategories() {
         ) : (
           <div className="grid grid-cols-2 gap-3 md:grid-cols-12 md:gap-5">
             {featured ? (
-              <CategoryCard
-                category={featured}
-                className="col-span-2 min-h-[240px] sm:min-h-[320px] md:col-span-7 md:min-h-[480px]"
-                delay={0}
-              />
+              <CategoryCard category={featured} className={heights.featured} delay={0} />
             ) : null}
             {second ? (
-              <CategoryCard
-                category={second}
-                className="col-span-2 min-h-[200px] sm:min-h-[260px] md:col-span-5 md:min-h-[480px]"
-                delay={80}
-              />
+              <CategoryCard category={second} className={heights.second} delay={80} />
             ) : null}
             {rest.map((category, index) => (
               <CategoryCard
                 key={category._id}
                 category={category}
-                className="col-span-1 min-h-[180px] sm:min-h-[220px] md:col-span-6 md:min-h-[240px] lg:col-span-3"
+                className={heights.rest}
                 delay={(index + 2) * 80}
               />
             ))}

@@ -33,7 +33,7 @@ export function ProductDetails({ product }: { product: ProductDTO }) {
   const anySizeInStock = product.inStock && product.sizes.some((entry) => isSizeInStock(entry));
 
   return (
-    <div className="mx-auto grid w-full max-w-4xl gap-8 lg:grid-cols-[minmax(0,22rem)_minmax(0,20rem)] lg:items-start lg:justify-center lg:gap-12 xl:max-w-5xl xl:grid-cols-[minmax(0,26rem)_minmax(0,22rem)]">
+    <div className="mx-auto grid w-full max-w-5xl gap-8 lg:grid-cols-[minmax(0,24rem)_minmax(0,28rem)] lg:items-start lg:justify-center lg:gap-10">
       <div className="mx-auto w-full max-w-xs sm:max-w-sm lg:mx-0 lg:max-w-none">
         <div className="relative aspect-[5/6] max-h-[min(52vh,420px)] w-full overflow-hidden bg-parchment sm:aspect-[4/5]">
           {image ? (
@@ -78,7 +78,7 @@ export function ProductDetails({ product }: { product: ProductDTO }) {
           <p className="font-sans text-[0.62rem] tracking-[0.22em] text-muted uppercase">
             Size
           </p>
-          <div className="mt-2 space-y-2">
+          <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-3">
             {product.sizes.map((option, index) => {
               const available = isSizeInStock(option);
               return (
@@ -87,31 +87,38 @@ export function ProductDetails({ product }: { product: ProductDTO }) {
                   type="button"
                   disabled={!available}
                   onClick={() => setSelectedIndex(index)}
-                  className={`flex w-full items-center justify-between gap-3 border px-3 py-2.5 text-left disabled:cursor-not-allowed disabled:opacity-50 sm:px-3.5 sm:py-3 ${
+                  className={`flex min-h-[118px] flex-col justify-between border px-3 py-3 text-left disabled:cursor-not-allowed disabled:opacity-50 ${
                     index === selectedIndex
                       ? "border-ink bg-cream"
                       : "border-line bg-ivory"
                   }`}
                 >
-                  <span className="min-w-0 font-serif text-base leading-snug sm:text-lg">
-                    {option.label}
+                  <span className="font-serif text-sm leading-snug sm:text-base">
+                    {option.label.split(" ")[0]}
+                    <span className="mt-0.5 block font-sans text-[0.58rem] tracking-[0.1em] text-muted uppercase">
+                      {option.label.includes("(")
+                        ? option.label.slice(option.label.indexOf("("))
+                        : option.label}
+                    </span>
+                  </span>
+                  <div className="mt-3">
                     {!available ? (
-                      <span className="ml-2 block font-sans text-[0.58rem] tracking-[0.14em] text-muted uppercase sm:inline">
+                      <span className="font-sans text-[0.58rem] tracking-[0.14em] text-muted uppercase">
                         Out of stock
                       </span>
                     ) : (
-                      <span className="ml-0 block font-sans text-[0.58rem] tracking-[0.14em] text-muted sm:ml-2 sm:inline">
+                      <span className="font-sans text-[0.58rem] tracking-[0.1em] text-muted">
                         {getSizeStock(option)} left
                       </span>
                     )}
-                  </span>
-                  <PriceDisplay
-                    originalPrice={option.price}
-                    globalDiscountPercent={globalDiscountPercent}
-                    productDiscountPercent={productDiscountPercent}
-                    size="sm"
-                    className="shrink-0 text-right"
-                  />
+                    <PriceDisplay
+                      originalPrice={option.price}
+                      globalDiscountPercent={globalDiscountPercent}
+                      productDiscountPercent={productDiscountPercent}
+                      size="sm"
+                      className="mt-1 block"
+                    />
+                  </div>
                 </button>
               );
             })}

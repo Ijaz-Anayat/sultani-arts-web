@@ -100,15 +100,18 @@ export async function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin size={16} className="mt-1 shrink-0 text-gold-soft" />
                 <span className="font-serif text-lg leading-snug">
-                  Atelier 14, Calligraphers&apos; Quarter
-                  <br />
-                  Lahore, Pakistan
+                  {SITE_CONTACT.locationLine}
                 </span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone size={16} className="text-gold-soft" />
-                <a href="tel:+923001234567" className="font-serif text-lg hover:text-gold-soft">
-                  +92 300 123 4567
+                <a
+                  href={SITE_CONTACT.whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-serif text-lg hover:text-gold-soft"
+                >
+                  {SITE_CONTACT.phoneDisplay}
                 </a>
               </li>
               <li className="flex items-center gap-3">

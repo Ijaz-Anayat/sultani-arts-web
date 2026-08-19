@@ -58,7 +58,7 @@ export function About() {
             </p>
           </div>
           <a
-            href="#contact"
+            href="/contact"
             className="mt-8 inline-flex border-b border-gold pb-1 font-sans text-[0.68rem] tracking-[0.16em] text-gold-deep uppercase transition-colors hover:border-ink hover:text-ink sm:mt-10 sm:text-[0.72rem] sm:tracking-[0.26em]"
           >
             Visit the atelier

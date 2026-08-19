@@ -27,7 +27,7 @@ export function ArtShowcase() {
           words it holds.
         </p>
         <Link
-          href="#contact"
+          href="/contact"
           className="mt-8 inline-flex w-full max-w-xs items-center justify-center bg-ivory px-6 py-3.5 font-sans text-[0.68rem] tracking-[0.16em] text-ink uppercase transition-colors hover:bg-gold sm:mt-10 sm:w-auto sm:max-w-none sm:px-8 sm:text-[0.72rem] sm:tracking-[0.28em]"
         >
           Begin a commission

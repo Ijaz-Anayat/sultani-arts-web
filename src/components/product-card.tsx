@@ -13,9 +13,11 @@ import type { ProductDTO } from "@/lib/types";
 export function ProductCard({
   product,
   revealDelay = 0,
+  compact = false,
 }: {
   product: ProductDTO;
   revealDelay?: number;
+  compact?: boolean;
 }) {
   const { addToCart, toggleWishlist, isWishlisted, setCartOpen, globalDiscountPercent } =
     useStore();
@@ -53,8 +55,11 @@ export function ProductCard({
   return (
     <RevealOnScroll delay={revealDelay} className="h-full">
       <article className="group flex h-full min-w-0 flex-col">
-      <div className="relative mb-3 overflow-hidden bg-parchment sm:mb-4">
-        <Link href={`/product/${product._id}`} className="relative block aspect-[4/5]">
+      <div className={`relative overflow-hidden bg-parchment ${compact ? "mb-2 sm:mb-3" : "mb-3 sm:mb-4"}`}>
+        <Link
+          href={`/product/${product._id}`}
+          className={`relative block ${compact ? "aspect-[3/4] max-h-[220px] sm:max-h-[260px]" : "aspect-[4/5]"}`}
+        >
           <Image
             src={image}
             alt={product.title}
@@ -91,7 +96,7 @@ export function ProductCard({
         {categoryName}
       </p>
       <Link href={`/product/${product._id}`}>
-        <h3 className="mt-1 font-serif text-[1.02rem] leading-snug text-ink sm:mt-1.5 sm:text-[1.35rem]">
+        <h3 className={`mt-1 font-serif leading-snug text-ink ${compact ? "text-[0.92rem] sm:text-[1.05rem]" : "mt-1.5 text-[1.02rem] sm:text-[1.35rem]"}`}>
           {product.title}
         </h3>
       </Link>
