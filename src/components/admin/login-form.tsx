@@ -1,13 +1,10 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { loginAdmin } from "@/lib/admin-login";
 import { Logo } from "@/components/logo";
 
 export function AdminLoginForm() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -18,21 +15,17 @@ export function AdminLoginForm() {
     setError("");
     setPending(true);
 
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
-
-    setPending(false);
-
-    if (result?.error) {
-      setError("Invalid email or password.");
-      return;
+    try {
+      const result = await loginAdmin(email.trim().toLowerCase(), password);
+      if (result?.error) {
+        setError(result.error);
+        setPending(false);
+      }
+    } catch (err) {
+      setError("Could not sign in. Check the email, password, and try again.");
+      setPending(false);
+      console.error(err);
     }
-
-    router.push(searchParams.get("callbackUrl") || "/admin/dashboard");
-    router.refresh();
   }
 
   return (
@@ -53,6 +46,7 @@ export function AdminLoginForm() {
             <input
               type="email"
               required
+              autoComplete="username"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               className="mt-2 w-full border border-line bg-ivory px-4 py-3 font-sans text-ink outline-none focus:border-gold"
@@ -65,6 +59,7 @@ export function AdminLoginForm() {
             <input
               type="password"
               required
+              autoComplete="current-password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               className="mt-2 w-full border border-line bg-ivory px-4 py-3 font-sans text-ink outline-none focus:border-gold"

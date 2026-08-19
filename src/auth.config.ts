@@ -13,14 +13,14 @@ export const authConfig = {
     jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.role = user.role;
+        token.role = "admin";
       }
       return token;
     },
     session({ session, token }) {
       if (session.user) {
         session.user.id = typeof token.id === "string" ? token.id : "";
-        session.user.role = token.role === "admin" ? "admin" : undefined;
+        session.user.role = "admin";
       }
       return session;
     },

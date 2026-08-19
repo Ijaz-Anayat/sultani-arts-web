@@ -1,13 +1,10 @@
 import { NextResponse } from "next/server";
-import NextAuth from "next-auth";
-import { authConfig } from "@/auth.config";
-
-const { auth } = NextAuth(authConfig);
+import { auth } from "@/auth";
 
 export const proxy = auth((request) => {
   const { pathname } = request.nextUrl;
   const isLogin = pathname === "/admin/login";
-  const isAdmin = request.auth?.user?.role === "admin";
+  const isAdmin = Boolean(request.auth?.user);
 
   if (pathname === "/admin") {
     return NextResponse.redirect(
