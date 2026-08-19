@@ -24,3 +24,9 @@ export const DEFAULT_CATEGORY_IMAGE = "/images/hero.jpg";
 
 export const CART_STORAGE_KEY = "sultani-arts-cart";
 export const WISHLIST_STORAGE_KEY = "sultani-arts-wishlist";
+
+export const SITE_CONTACT = {
+  email: "team.sultaniarts@gmail.com",
+  instagram: "https://www.instagram.com/sultaniarts010?igsh=ejJibGhtam1hb3Bl",
+  facebook: "https://www.facebook.com/profile.php?id=61593303458306",
+} as const;

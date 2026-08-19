@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { ProductDetails } from "@/components/product-details";
+import { RevealOnScroll } from "@/components/reveal-on-scroll";
 import { getProductById } from "@/lib/queries";
 import { isValidObjectId } from "@/lib/utils";
 
@@ -19,7 +20,9 @@ export default async function ProductPage({
   return (
     <main className="flex-1 px-4 py-10 sm:px-5 sm:py-12 md:px-8">
       <div className="mx-auto max-w-5xl">
-        <ProductDetails product={product} />
+        <RevealOnScroll>
+          <ProductDetails product={product} />
+        </RevealOnScroll>
       </div>
     </main>
   );

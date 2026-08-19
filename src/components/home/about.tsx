@@ -1,10 +1,12 @@
 import Image from "next/image";
+import { RevealOnScroll } from "@/components/reveal-on-scroll";
 
 export function About() {
   return (
     <section id="about" className="px-4 py-14 sm:px-5 sm:py-20 md:px-8 md:py-28">
       <div className="mx-auto grid max-w-[1400px] items-center gap-8 sm:gap-12 lg:grid-cols-2 lg:gap-20">
-        <div className="relative mx-auto w-full max-w-lg lg:max-w-none">
+        <RevealOnScroll direction="left">
+          <div className="relative mx-auto w-full max-w-lg lg:max-w-none">
           <div className="relative aspect-[4/5] overflow-hidden bg-cream">
             <Image
               src="/images/about.jpg"
@@ -26,9 +28,11 @@ export function About() {
               Crafted slowly, meant to remain
             </p>
           </div>
-        </div>
+          </div>
+        </RevealOnScroll>
 
-        <div>
+        <RevealOnScroll direction="right" delay={100}>
+          <div>
           <p className="font-sans text-[0.65rem] tracking-[0.22em] text-gold-deep uppercase sm:text-[0.7rem] sm:tracking-[0.36em]">
             The House
           </p>
@@ -59,7 +63,8 @@ export function About() {
           >
             Visit the atelier
           </a>
-        </div>
+          </div>
+        </RevealOnScroll>
       </div>
     </section>
   );

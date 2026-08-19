@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { RevealOnScroll } from "@/components/reveal-on-scroll";
 
 export function Newsletter() {
   const [email, setEmail] = useState("");
@@ -29,7 +30,8 @@ export function Newsletter() {
 
   return (
     <section className="px-4 pb-14 sm:px-5 sm:pb-20 md:px-8 md:pb-28">
-      <div className="mx-auto max-w-[1400px] border border-line bg-cream px-4 py-12 text-center sm:px-6 sm:py-16 md:px-16">
+      <RevealOnScroll>
+        <div className="mx-auto max-w-[1400px] border border-line bg-cream px-4 py-12 text-center sm:px-6 sm:py-16 md:px-16">
         <p className="font-sans text-[0.65rem] tracking-[0.22em] text-gold-deep uppercase sm:text-[0.7rem] sm:tracking-[0.36em]">
           The atelier letter
         </p>
@@ -68,7 +70,8 @@ export function Newsletter() {
           </form>
         )}
         {error ? <p className="mt-3 text-sm text-gold-deep">{error}</p> : null}
-      </div>
+        </div>
+      </RevealOnScroll>
     </section>
   );
 }

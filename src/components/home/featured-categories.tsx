@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { RevealOnScroll } from "@/components/reveal-on-scroll";
 import { getCategories } from "@/lib/queries";
 import type { CategoryDTO } from "@/lib/types";
 
@@ -18,7 +19,8 @@ export async function FeaturedCategories() {
   return (
     <section id="categories" className="px-4 py-14 sm:px-5 sm:py-20 md:px-8 md:py-28">
       <div className="mx-auto max-w-[1400px]">
-        <div className="mb-8 flex flex-col justify-between gap-3 sm:mb-12 md:mb-16 md:flex-row md:items-end md:gap-4">
+        <RevealOnScroll>
+          <div className="mb-8 flex flex-col justify-between gap-3 sm:mb-12 md:mb-16 md:flex-row md:items-end md:gap-4">
           <div>
             <p className="font-sans text-[0.65rem] tracking-[0.22em] text-gold-deep uppercase sm:text-[0.7rem] sm:tracking-[0.36em]">
               The Gallery
@@ -31,7 +33,8 @@ export async function FeaturedCategories() {
             From sacred verse to contemporary composition — each collection is
             curated for presence, not volume.
           </p>
-        </div>
+          </div>
+        </RevealOnScroll>
 
         {categories.length === 0 ? (
           <p className="font-serif text-lg text-muted">
@@ -43,19 +46,22 @@ export async function FeaturedCategories() {
               <CategoryCard
                 category={featured}
                 className="col-span-2 min-h-[240px] sm:min-h-[320px] md:col-span-7 md:min-h-[480px]"
+                delay={0}
               />
             ) : null}
             {second ? (
               <CategoryCard
                 category={second}
                 className="col-span-2 min-h-[200px] sm:min-h-[260px] md:col-span-5 md:min-h-[480px]"
+                delay={80}
               />
             ) : null}
-            {rest.map((category) => (
+            {rest.map((category, index) => (
               <CategoryCard
                 key={category._id}
                 category={category}
                 className="col-span-1 min-h-[180px] sm:min-h-[220px] md:col-span-6 md:min-h-[240px] lg:col-span-3"
+                delay={(index + 2) * 80}
               />
             ))}
           </div>
@@ -68,15 +74,18 @@ export async function FeaturedCategories() {
 function CategoryCard({
   category,
   className,
+  delay = 0,
 }: {
   category: CategoryDTO;
   className?: string;
+  delay?: number;
 }) {
   return (
-    <Link
-      href={`/shop?category=${category.slug}`}
-      className={`group relative block overflow-hidden bg-cream ${className ?? ""}`}
-    >
+    <RevealOnScroll delay={delay} className={className}>
+      <Link
+        href={`/shop?category=${category.slug}`}
+        className="group relative block h-full overflow-hidden bg-cream"
+      >
       <Image
         src={category.image || "/images/hero.jpg"}
         alt={category.name}
@@ -96,6 +105,7 @@ function CategoryCard({
           Enter collection
         </span>
       </div>
-    </Link>
+      </Link>
+    </RevealOnScroll>
   );
 }

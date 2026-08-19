@@ -4,12 +4,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { Heart } from "lucide-react";
 import { PriceDisplay } from "@/components/price-display";
+import { RevealOnScroll } from "@/components/reveal-on-scroll";
 import { useStore } from "@/components/store-provider";
 import { getDiscountedPrice } from "@/lib/pricing";
 import { findFirstAvailableSizeIndex, isSizeInStock } from "@/lib/product-sizes";
 import type { ProductDTO } from "@/lib/types";
 
-export function ProductCard({ product }: { product: ProductDTO }) {
+export function ProductCard({
+  product,
+  revealDelay = 0,
+}: {
+  product: ProductDTO;
+  revealDelay?: number;
+}) {
   const { addToCart, toggleWishlist, isWishlisted, setCartOpen, globalDiscountPercent } =
     useStore();
   const saved = isWishlisted(product._id);
@@ -44,7 +51,8 @@ export function ProductCard({ product }: { product: ProductDTO }) {
   }
 
   return (
-    <article className="group flex min-w-0 flex-col">
+    <RevealOnScroll delay={revealDelay} className="h-full">
+      <article className="group flex h-full min-w-0 flex-col">
       <div className="relative mb-3 overflow-hidden bg-parchment sm:mb-4">
         <Link href={`/product/${product._id}`} className="relative block aspect-[4/5]">
           <Image
@@ -109,6 +117,7 @@ export function ProductCard({ product }: { product: ProductDTO }) {
           Out of stock
         </p>
       )}
-    </article>
+      </article>
+    </RevealOnScroll>
   );
 }
