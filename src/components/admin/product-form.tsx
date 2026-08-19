@@ -25,6 +25,7 @@ export function ProductForm({ categories, product }: Props) {
       : DEFAULT_SIZES.map((size) => ({ ...size })),
   );
   const [inStock, setInStock] = useState(product?.inStock ?? true);
+  const [discountPercent, setDiscountPercent] = useState(product?.discountPercent ?? 0);
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -63,6 +64,7 @@ export function ProductForm({ categories, product }: Props) {
       category,
       sizes,
       inStock,
+      discountPercent,
     };
 
     const response = await fetch(
@@ -163,45 +165,87 @@ export function ProductForm({ categories, product }: Props) {
       </div>
 
       <div>
-        <p className="mb-3 font-sans text-[0.65rem] tracking-[0.2em] text-muted uppercase">
-          Sizes (3 required)
+        <p className="font-sans text-[0.65rem] tracking-[0.2em] text-muted uppercase">
+          Sizes & prices
         </p>
-        <div className="space-y-3">
+        <p className="mt-1 mb-4 font-sans text-sm text-muted">
+          Each product needs 3 size options. Shop and cart use the price you enter for the selected size.
+        </p>
+        <div className="space-y-4">
           {sizes.map((size, index) => (
             <div key={index} className="grid gap-3 sm:grid-cols-2">
-              <input
-                required
-                value={size.label}
-                onChange={(event) =>
-                  setSizes((current) =>
-                    current.map((item, itemIndex) =>
-                      itemIndex === index ? { ...item, label: event.target.value } : item,
-                    ),
-                  )
-                }
-                className="border border-line bg-ivory px-4 py-3 outline-none focus:border-gold"
-              />
-              <input
-                required
-                type="number"
-                min="0"
-                step="1"
-                value={size.price}
-                onChange={(event) =>
-                  setSizes((current) =>
-                    current.map((item, itemIndex) =>
-                      itemIndex === index
-                        ? { ...item, price: Number(event.target.value) }
-                        : item,
-                    ),
-                  )
-                }
-                className="border border-line bg-ivory px-4 py-3 outline-none focus:border-gold"
-              />
+              <label className="block">
+                <span className="font-sans text-[0.65rem] tracking-[0.2em] text-muted uppercase">
+                  Size {index + 1}
+                </span>
+                <input
+                  required
+                  placeholder="e.g. Small (12x16 in)"
+                  value={size.label}
+                  onChange={(event) =>
+                    setSizes((current) =>
+                      current.map((item, itemIndex) =>
+                        itemIndex === index ? { ...item, label: event.target.value } : item,
+                      ),
+                    )
+                  }
+                  className="mt-2 w-full border border-line bg-ivory px-4 py-3 outline-none focus:border-gold"
+                />
+              </label>
+              <label className="block">
+                <span className="font-sans text-[0.65rem] tracking-[0.2em] text-muted uppercase">
+                  Price (PKR)
+                </span>
+                <div className="mt-2 flex border border-line bg-ivory focus-within:border-gold">
+                  <span className="flex items-center px-3 font-sans text-[0.72rem] text-muted">
+                    Rs.
+                  </span>
+                  <input
+                    required
+                    type="number"
+                    min="0"
+                    step="1"
+                    placeholder="0"
+                    value={size.price || ""}
+                    onChange={(event) =>
+                      setSizes((current) =>
+                        current.map((item, itemIndex) =>
+                          itemIndex === index
+                            ? { ...item, price: Number(event.target.value) || 0 }
+                            : item,
+                        ),
+                      )
+                    }
+                    className="min-w-0 flex-1 bg-transparent px-4 py-3 outline-none"
+                  />
+                </div>
+              </label>
             </div>
           ))}
         </div>
       </div>
+
+      <label className="block">
+        <span className="font-sans text-[0.65rem] tracking-[0.2em] text-muted uppercase">
+          Product discount (%)
+        </span>
+        <div className="mt-2 flex border border-line bg-ivory focus-within:border-gold">
+          <input
+            type="number"
+            min="0"
+            max="100"
+            step="1"
+            value={discountPercent}
+            onChange={(event) => setDiscountPercent(Number(event.target.value) || 0)}
+            className="min-w-0 flex-1 bg-transparent px-4 py-3 outline-none"
+          />
+          <span className="flex items-center px-4 font-sans text-muted">%</span>
+        </div>
+        <p className="mt-2 font-sans text-sm text-muted">
+          Extra discount for this product only. It is added to the store-wide discount from the
+          Discount page.
+        </p>
+      </label>
 
       <label className="flex items-center gap-3 font-sans text-sm">
         <input

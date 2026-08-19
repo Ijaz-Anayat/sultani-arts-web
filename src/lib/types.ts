@@ -22,6 +22,7 @@ export type ProductDTO = {
   category: CategoryDTO | string;
   sizes: ProductSize[];
   inStock: boolean;
+  discountPercent?: number;
   createdAt?: string;
 };
 
@@ -31,6 +32,7 @@ export type CartItem = {
   image: string;
   size: string;
   price: number;
+  originalPrice?: number;
   quantity: number;
 };
 

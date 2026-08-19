@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { ORDER_STATUSES, type OrderStatus } from "@/lib/constants";
+import { formatPrice } from "@/lib/pricing";
 import type { OrderDTO } from "@/lib/types";
 
 export function OrdersTable({ orders }: { orders: OrderDTO[] }) {
@@ -33,7 +34,7 @@ export function OrdersTable({ orders }: { orders: OrderDTO[] }) {
               <p className="mt-1 text-sm text-muted">{order.customer.address}</p>
             </div>
             <div className="text-right">
-              <p className="font-serif text-2xl">${order.totalAmount}</p>
+              <p className="font-serif text-2xl">{formatPrice(order.totalAmount)}</p>
               <select
                 value={order.status}
                 onChange={(event) =>
@@ -55,7 +56,7 @@ export function OrdersTable({ orders }: { orders: OrderDTO[] }) {
                 <span>
                   {item.title} · {item.size} × {item.quantity}
                 </span>
-                <span>${item.price * item.quantity}</span>
+                <span>{formatPrice(item.price * item.quantity)}</span>
               </li>
             ))}
           </ul>

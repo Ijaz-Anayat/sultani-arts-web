@@ -2,17 +2,26 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { PriceDisplay } from "@/components/price-display";
 import { useStore } from "@/components/store-provider";
+import { formatPrice, getDiscountedPrice } from "@/lib/pricing";
 import type { ProductDTO } from "@/lib/types";
 
 export function ProductDetails({ product }: { product: ProductDTO }) {
-  const { addToCart, setCartOpen } = useStore();
+  const { addToCart, setCartOpen, globalDiscountPercent } = useStore();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [imageIndex, setImageIndex] = useState(0);
   const size = product.sizes[selectedIndex] ?? product.sizes[0];
   const image = product.images[imageIndex] ?? product.images[0];
   const categoryName =
     typeof product.category === "object" ? product.category.name : "";
+  const productDiscountPercent = product.discountPercent ?? 0;
+  const selectedOriginal = size?.price ?? 0;
+  const selectedDiscounted = getDiscountedPrice(
+    selectedOriginal,
+    globalDiscountPercent,
+    productDiscountPercent,
+  );
 
   return (
     <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
@@ -73,13 +82,25 @@ export function ProductDetails({ product }: { product: ProductDTO }) {
                 }`}
               >
                 <span className="font-serif text-lg">{option.label}</span>
-                <span className="font-sans text-sm">${option.price}</span>
+                <PriceDisplay
+                  originalPrice={option.price}
+                  globalDiscountPercent={globalDiscountPercent}
+                  productDiscountPercent={productDiscountPercent}
+                  size="sm"
+                />
               </button>
             ))}
           </div>
         </div>
 
-        <p className="mt-8 font-serif text-3xl">${size?.price ?? 0}</p>
+        <div className="mt-8">
+          <PriceDisplay
+            originalPrice={selectedOriginal}
+            globalDiscountPercent={globalDiscountPercent}
+            productDiscountPercent={productDiscountPercent}
+            size="lg"
+          />
+        </div>
         <button
           type="button"
           disabled={!product.inStock || !size}
@@ -90,13 +111,14 @@ export function ProductDetails({ product }: { product: ProductDTO }) {
               title: product.title,
               image,
               size: size.label,
-              price: size.price,
+              price: selectedDiscounted,
+              originalPrice: size.price,
             });
             setCartOpen(true);
           }}
           className="mt-6 w-full bg-ink py-3.5 font-sans text-[0.72rem] tracking-[0.24em] text-ivory uppercase transition-colors hover:bg-gold-deep disabled:opacity-50"
         >
-          {product.inStock ? "Add to cart" : "Currently unavailable"}
+          {product.inStock ? `Add to cart · ${formatPrice(selectedDiscounted)}` : "Currently unavailable"}
         </button>
       </div>
     </div>

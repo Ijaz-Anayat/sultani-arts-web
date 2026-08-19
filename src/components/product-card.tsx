@@ -3,26 +3,38 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Heart } from "lucide-react";
+import { PriceDisplay } from "@/components/price-display";
 import { useStore } from "@/components/store-provider";
+import { getDiscountedPrice } from "@/lib/pricing";
 import type { ProductDTO } from "@/lib/types";
-import { startingPrice } from "@/lib/utils";
 
 export function ProductCard({ product }: { product: ProductDTO }) {
-  const { addToCart, toggleWishlist, isWishlisted, setCartOpen } = useStore();
+  const { addToCart, toggleWishlist, isWishlisted, setCartOpen, globalDiscountPercent } =
+    useStore();
   const saved = isWishlisted(product._id);
   const image = product.images[0] ?? "/images/hero.jpg";
   const categoryName =
     typeof product.category === "object" ? product.category.name : "";
   const defaultSize = product.sizes[0];
+  const productDiscountPercent = product.discountPercent ?? 0;
+  const fromOriginal = product.sizes.length
+    ? Math.min(...product.sizes.map((entry) => entry.price))
+    : 0;
 
   function handleAdd() {
     if (!defaultSize) return;
+    const discountedPrice = getDiscountedPrice(
+      defaultSize.price,
+      globalDiscountPercent,
+      productDiscountPercent,
+    );
     addToCart({
       productId: product._id,
       title: product.title,
       image,
       size: defaultSize.label,
-      price: defaultSize.price,
+      price: discountedPrice,
+      originalPrice: defaultSize.price,
     });
     setCartOpen(true);
   }
@@ -69,8 +81,14 @@ export function ProductCard({ product }: { product: ProductDTO }) {
           {product.title}
         </h3>
       </Link>
-      <p className="mt-1.5 font-sans text-sm tracking-wide text-ink-soft sm:mt-2">
-        From ${startingPrice(product.sizes)}
+      <p className="mt-1.5 font-sans tracking-wide text-ink-soft sm:mt-2">
+        <PriceDisplay
+          originalPrice={fromOriginal}
+          globalDiscountPercent={globalDiscountPercent}
+          productDiscountPercent={productDiscountPercent}
+          prefix="From "
+          size="sm"
+        />
       </p>
       <button
         type="button"

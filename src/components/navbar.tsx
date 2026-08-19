@@ -7,6 +7,7 @@ import { Menu, Search, ShoppingBag, User, X } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import { Logo } from "@/components/logo";
 import { useStore } from "@/components/store-provider";
+import { formatPrice } from "@/lib/pricing";
 import { navLinks } from "@/lib/data";
 
 export function Navbar() {
@@ -256,7 +257,15 @@ export function Navbar() {
                       {item.title}
                     </p>
                     <p className="mt-1 text-sm text-muted">
-                      {item.size} · Qty {item.quantity} · ${item.price}
+                      {item.size} · Qty {item.quantity} ·{" "}
+                      {item.originalPrice && item.originalPrice > item.price ? (
+                        <>
+                          {formatPrice(item.price)}{" "}
+                          <span className="line-through">{formatPrice(item.originalPrice)}</span>
+                        </>
+                      ) : (
+                        formatPrice(item.price)
+                      )}
                     </p>
                     <button
                       type="button"
@@ -275,7 +284,7 @@ export function Navbar() {
           <div className="border-t border-line px-6 py-5">
             <div className="mb-4 flex justify-between font-sans text-sm tracking-wide uppercase">
               <span>Subtotal</span>
-              <span>${total.toFixed(0)}</span>
+              <span>{formatPrice(total)}</span>
             </div>
             <Link
               href="/checkout"

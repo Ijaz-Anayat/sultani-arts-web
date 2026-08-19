@@ -4,7 +4,14 @@ import { serialize } from "@/lib/utils";
 import { Category } from "@/models/Category";
 import { Product } from "@/models/Product";
 import { Order } from "@/models/Order";
+import { Settings } from "@/models/Settings";
 import type { CategoryDTO, ProductDTO, OrderDTO } from "@/lib/types";
+
+export async function getGlobalDiscountPercent(): Promise<number> {
+  await connectDB();
+  const settings = await Settings.findOne({ key: "store" }).lean();
+  return settings?.globalDiscountPercent ?? 0;
+}
 
 export async function getCategories(): Promise<CategoryDTO[]> {
   await connectDB();

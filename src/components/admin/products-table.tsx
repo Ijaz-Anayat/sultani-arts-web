@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { ProductDTO } from "@/lib/types";
-import { startingPrice } from "@/lib/utils";
+import { formatPrice, startingPrice } from "@/lib/pricing";
 
 export function ProductsTable({ products }: { products: ProductDTO[] }) {
   const router = useRouter();
@@ -26,6 +26,7 @@ export function ProductsTable({ products }: { products: ProductDTO[] }) {
             <th className="px-4 py-3">Title</th>
             <th className="px-4 py-3">Category</th>
             <th className="px-4 py-3">From</th>
+            <th className="px-4 py-3">Discount</th>
             <th className="px-4 py-3">Stock</th>
             <th className="px-4 py-3" />
           </tr>
@@ -37,7 +38,10 @@ export function ProductsTable({ products }: { products: ProductDTO[] }) {
               <td className="px-4 py-3 text-sm text-muted">
                 {typeof product.category === "object" ? product.category.name : "—"}
               </td>
-              <td className="px-4 py-3">${startingPrice(product.sizes)}</td>
+              <td className="px-4 py-3">{formatPrice(startingPrice(product.sizes))}</td>
+              <td className="px-4 py-3 text-sm text-muted">
+                {product.discountPercent ? `${product.discountPercent}%` : "—"}
+              </td>
               <td className="px-4 py-3">{product.inStock ? "In stock" : "Hidden"}</td>
               <td className="px-4 py-3 text-right">
                 <Link

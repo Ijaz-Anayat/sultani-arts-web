@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin";
 import { connectDB } from "@/lib/mongodb";
 import { isValidObjectId, serialize } from "@/lib/utils";
+import { getDiscountedPrice } from "@/lib/pricing";
+import { getGlobalDiscountPercent } from "@/lib/queries";
 import { Order } from "@/models/Order";
 import { Product } from "@/models/Product";
 
@@ -52,6 +54,7 @@ export async function POST(request: Request) {
     }
 
     await connectDB();
+    const globalDiscountPercent = await getGlobalDiscountPercent();
 
     const items = [];
     for (const item of body.items) {
@@ -73,12 +76,18 @@ export async function POST(request: Request) {
         );
       }
 
+      const unitPrice = getDiscountedPrice(
+        size.price,
+        globalDiscountPercent,
+        product.discountPercent ?? 0,
+      );
+
       items.push({
         product: product._id,
         title: product.title,
         image: product.images[0],
         size: size.label,
-        price: size.price,
+        price: unitPrice,
         quantity,
       });
     }

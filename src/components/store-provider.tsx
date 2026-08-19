@@ -16,6 +16,7 @@ type StoreContextValue = {
   cart: CartItem[];
   wishlist: string[];
   cartCount: number;
+  globalDiscountPercent: number;
   addToCart: (item: Omit<CartItem, "quantity"> & { quantity?: number }) => void;
   removeFromCart: (productId: string, size: string) => void;
   toggleWishlist: (id: string) => void;
@@ -37,7 +38,13 @@ function readStorage<T>(key: string, fallback: T): T {
   }
 }
 
-export function StoreProvider({ children }: { children: ReactNode }) {
+export function StoreProvider({
+  children,
+  globalDiscountPercent = 0,
+}: {
+  children: ReactNode;
+  globalDiscountPercent?: number;
+}) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
@@ -87,6 +94,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
             image: item.image,
             size: item.size,
             price: item.price,
+            originalPrice: item.originalPrice,
             quantity,
           },
         ];
@@ -132,6 +140,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       cart,
       wishlist,
       cartCount,
+      globalDiscountPercent,
       addToCart,
       removeFromCart,
       toggleWishlist,
@@ -145,6 +154,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       cart,
       wishlist,
       cartCount,
+      globalDiscountPercent,
       addToCart,
       removeFromCart,
       toggleWishlist,

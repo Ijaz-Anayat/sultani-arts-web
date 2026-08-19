@@ -14,11 +14,4 @@ export function isValidObjectId(id: string) {
   return /^[a-fA-F0-9]{24}$/.test(id);
 }
 
-export function formatPrice(amount: number) {
-  return `$${amount.toFixed(0)}`;
-}
-
-export function startingPrice(sizes: { price: number }[]) {
-  if (!sizes.length) return 0;
-  return Math.min(...sizes.map((size) => size.price));
-}
+export { formatPrice, startingPrice } from "@/lib/pricing";

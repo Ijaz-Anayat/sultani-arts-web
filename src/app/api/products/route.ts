@@ -6,6 +6,7 @@ import { getProducts } from "@/lib/queries";
 import { Product } from "@/models/Product";
 import { Category } from "@/models/Category";
 import { isValidObjectId } from "@/lib/utils";
+import { parseDiscountPercent } from "@/lib/pricing";
 
 function parseSizes(raw: unknown) {
   if (!Array.isArray(raw) || raw.length !== 3) {
@@ -49,6 +50,7 @@ export async function POST(request: Request) {
       category?: string;
       sizes?: unknown;
       inStock?: boolean;
+      discountPercent?: unknown;
     };
 
     const title = body.title?.trim();
@@ -57,6 +59,7 @@ export async function POST(request: Request) {
       ? body.images.filter((url) => typeof url === "string" && url.length > 0)
       : [];
     const sizes = parseSizes(body.sizes);
+    const discountPercent = parseDiscountPercent(body.discountPercent);
 
     if (!title || !description) {
       return NextResponse.json({ error: "Title and description are required" }, { status: 400 });
@@ -87,6 +90,7 @@ export async function POST(request: Request) {
       category: body.category,
       sizes,
       inStock: body.inStock !== false,
+      discountPercent,
     });
 
     const populated = await product.populate("category");

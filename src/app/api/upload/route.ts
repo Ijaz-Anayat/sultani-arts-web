@@ -26,6 +26,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ url: secureUrl });
   } catch (err) {
     console.error("Upload failed", err);
-    return NextResponse.json({ error: "Image upload failed" }, { status: 500 });
+    const message =
+      err instanceof Error && err.message
+        ? err.message
+        : "Image upload failed. Check Cloudinary environment variables on Vercel.";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

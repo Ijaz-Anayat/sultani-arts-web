@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { LayoutDashboard, Package, Shapes, ShoppingBag, LogOut } from "lucide-react";
+import { LayoutDashboard, Package, Shapes, ShoppingBag, LogOut, Percent } from "lucide-react";
 import { Logo } from "@/components/logo";
 import type { ReactNode } from "react";
 
@@ -11,6 +11,7 @@ const links = [
   { href: "/admin/dashboard", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/products", label: "Products", icon: Package },
   { href: "/admin/categories", label: "Categories", icon: Shapes },
+  { href: "/admin/discount", label: "Discount", icon: Percent },
   { href: "/admin/orders", label: "Orders", icon: ShoppingBag },
 ];
 

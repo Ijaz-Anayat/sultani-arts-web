@@ -4,6 +4,7 @@ import { FormEvent, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useStore } from "@/components/store-provider";
+import { formatPrice } from "@/lib/pricing";
 
 export function CheckoutForm() {
   const { cart, clearCart } = useStore();
@@ -126,7 +127,7 @@ export function CheckoutForm() {
           disabled={pending}
           className="w-full bg-ink py-3.5 font-sans text-[0.72rem] tracking-[0.24em] text-ivory uppercase hover:bg-gold-deep disabled:opacity-60"
         >
-          {pending ? "Placing order…" : `Place order · $${total}`}
+          {pending ? "Placing order…" : `Place order · ${formatPrice(total)}`}
         </button>
       </form>
 
@@ -144,13 +145,20 @@ export function CheckoutForm() {
                   {item.size} × {item.quantity}
                 </p>
               </div>
-              <p className="text-sm">${item.price * item.quantity}</p>
+              <div className="text-right text-sm">
+                <p>{formatPrice(item.price * item.quantity)}</p>
+                {item.originalPrice && item.originalPrice > item.price ? (
+                  <p className="text-xs text-muted line-through">
+                    {formatPrice(item.originalPrice * item.quantity)}
+                  </p>
+                ) : null}
+              </div>
             </li>
           ))}
         </ul>
         <div className="mt-6 flex justify-between border-t border-line pt-4 font-sans text-sm uppercase tracking-wide">
           <span>Total</span>
-          <span>${total}</span>
+          <span>{formatPrice(total)}</span>
         </div>
       </aside>
     </div>

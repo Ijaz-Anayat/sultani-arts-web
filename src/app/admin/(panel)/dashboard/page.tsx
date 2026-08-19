@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { formatPrice } from "@/lib/pricing";
 import { getDashboardStats } from "@/lib/queries";
 
 export default async function AdminDashboardPage() {
@@ -43,7 +44,7 @@ export default async function AdminDashboardPage() {
                 {stats.recentOrders.map((order) => (
                   <tr key={order._id} className="border-t border-line">
                     <td className="px-4 py-3 font-serif">{order.customer.name}</td>
-                    <td className="px-4 py-3">${order.totalAmount}</td>
+                    <td className="px-4 py-3">{formatPrice(order.totalAmount)}</td>
                     <td className="px-4 py-3 capitalize">{order.status}</td>
                   </tr>
                 ))}

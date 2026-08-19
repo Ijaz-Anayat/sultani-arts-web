@@ -3,6 +3,7 @@ import { requireAdmin } from "@/lib/admin";
 import { connectDB } from "@/lib/mongodb";
 import { getProductById } from "@/lib/queries";
 import { isValidObjectId } from "@/lib/utils";
+import { parseDiscountPercent } from "@/lib/pricing";
 import { Category } from "@/models/Category";
 import { Product } from "@/models/Product";
 
@@ -55,6 +56,7 @@ export async function PUT(request: Request, context: RouteContext) {
       category?: string;
       sizes?: unknown;
       inStock?: boolean;
+      discountPercent?: unknown;
     };
 
     const title = body.title?.trim();
@@ -63,6 +65,7 @@ export async function PUT(request: Request, context: RouteContext) {
       ? body.images.filter((url) => typeof url === "string" && url.length > 0)
       : [];
     const sizes = parseSizes(body.sizes);
+    const discountPercent = parseDiscountPercent(body.discountPercent);
 
     if (!title || !description) {
       return NextResponse.json({ error: "Title and description are required" }, { status: 400 });
@@ -95,6 +98,7 @@ export async function PUT(request: Request, context: RouteContext) {
         category: body.category,
         sizes,
         inStock: body.inStock !== false,
+        discountPercent,
       },
       { new: true, runValidators: true },
     ).populate("category");

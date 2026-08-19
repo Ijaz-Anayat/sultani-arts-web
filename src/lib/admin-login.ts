@@ -18,9 +18,7 @@ export async function loginAdmin(email: string, password: string) {
 
     const matches = await compare(password, admin.password);
     if (!matches) {
-      return {
-        error: `Password does not match. You typed ${password.length} character(s); the admin password is 16 characters and includes #.`,
-      };
+      return { error: "Invalid email or password." };
     }
   } catch (error) {
     console.error("Admin pre-check failed", error);

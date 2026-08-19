@@ -75,7 +75,7 @@ export function AdminLoginForm() {
               </button>
             </div>
             <p className="mt-2 font-sans text-[0.7rem] text-muted">
-              {password.length} characters · paste the 16-character password, do not type it
+              {password.length} character{password.length === 1 ? "" : "s"}
             </p>
           </label>
           {error ? <p className="font-sans text-sm text-gold-deep">{error}</p> : null}

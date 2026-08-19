@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Cormorant_Garamond, Great_Vibes, Outfit } from "next/font/google";
 import { AuthSessionProvider } from "@/components/auth-session-provider";
 import { StoreProvider } from "@/components/store-provider";
+import { getGlobalDiscountPercent } from "@/lib/queries";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -39,7 +40,14 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  let globalDiscountPercent = 0;
+  try {
+    globalDiscountPercent = await getGlobalDiscountPercent();
+  } catch {
+    globalDiscountPercent = 0;
+  }
+
   return (
     <html
       lang="en"
@@ -47,7 +55,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     >
       <body className="flex min-h-full flex-col bg-ivory font-sans text-ink">
         <AuthSessionProvider>
-          <StoreProvider>{children}</StoreProvider>
+          <StoreProvider globalDiscountPercent={globalDiscountPercent}>
+            {children}
+          </StoreProvider>
         </AuthSessionProvider>
       </body>
     </html>
