@@ -39,7 +39,7 @@ export function AdminLoginForm() {
     <div className="flex min-h-full items-center justify-center bg-ivory px-4 py-16">
       <div className="w-full max-w-md border border-line bg-cream/60 px-6 py-10 sm:px-10">
         <div className="mb-8 flex flex-col items-center text-center">
-          <Logo />
+          <Logo variant="stacked" />
           <p className="mt-6 font-sans text-[0.68rem] tracking-[0.28em] text-gold-deep uppercase">
             Atelier access
           </p>

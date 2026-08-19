@@ -28,8 +28,8 @@ export const metadata: Metadata = {
   description:
     "A modern atelier for Islamic and Arabic calligraphy, wall art, and custom artistic pieces. Where tradition meets contemporary design.",
   icons: {
-    icon: "/icon.svg",
-    apple: "/apple-icon",
+    icon: "/icon.png",
+    apple: "/apple-touch-icon.png",
   },
 };
 

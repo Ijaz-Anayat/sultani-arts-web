@@ -32,4 +32,4 @@ export type OrderDocument = InferSchemaType<typeof orderSchema> & {
 
 export const Order: Model<OrderDocument> =
   (mongoose.models.Order as Model<OrderDocument> | undefined) ??
-  mongoose.model<OrderDocument>("Order", orderSchema);
+  mongoose.model<OrderDocument>("Order", orderSchema, "orders");

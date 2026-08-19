@@ -12,4 +12,4 @@ export type CategoryDocument = InferSchemaType<typeof categorySchema> & {
 
 export const Category: Model<CategoryDocument> =
   (mongoose.models.Category as Model<CategoryDocument> | undefined) ??
-  mongoose.model<CategoryDocument>("Category", categorySchema);
+  mongoose.model<CategoryDocument>("Category", categorySchema, "categories");

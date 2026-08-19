@@ -19,4 +19,4 @@ export type AdminDocument = InferSchemaType<typeof adminSchema> & {
 
 export const Admin: Model<AdminDocument> =
   (mongoose.models.Admin as Model<AdminDocument> | undefined) ??
-  mongoose.model<AdminDocument>("Admin", adminSchema);
+  mongoose.model<AdminDocument>("Admin", adminSchema, "admins");

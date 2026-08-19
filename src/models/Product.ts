@@ -42,4 +42,4 @@ export type ProductDocument = InferSchemaType<typeof productSchema> & {
 
 export const Product: Model<ProductDocument> =
   (mongoose.models.Product as Model<ProductDocument> | undefined) ??
-  mongoose.model<ProductDocument>("Product", productSchema);
+  mongoose.model<ProductDocument>("Product", productSchema, "products");

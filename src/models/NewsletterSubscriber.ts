@@ -17,4 +17,8 @@ export type NewsletterDocument = InferSchemaType<typeof newsletterSchema> & {
 
 export const NewsletterSubscriber: Model<NewsletterDocument> =
   (mongoose.models.NewsletterSubscriber as Model<NewsletterDocument> | undefined) ??
-  mongoose.model<NewsletterDocument>("NewsletterSubscriber", newsletterSchema);
+  mongoose.model<NewsletterDocument>(
+    "NewsletterSubscriber",
+    newsletterSchema,
+    "newslettersubscribers",
+  );
