@@ -1,11 +1,19 @@
 import { connectDB } from "@/lib/mongodb";
 import { CATEGORY_FALLBACK_IMAGES, DEFAULT_CATEGORY_IMAGE } from "@/lib/constants";
+import { resolveProductImage, resolveProductImages } from "@/lib/site-images";
 import { serialize } from "@/lib/utils";
 import { Category } from "@/models/Category";
 import { Product } from "@/models/Product";
 import { Order } from "@/models/Order";
 import { Settings } from "@/models/Settings";
 import type { CategoryDTO, ProductDTO, OrderDTO } from "@/lib/types";
+
+function normalizeProduct<T extends ProductDTO>(product: T): T {
+  return {
+    ...product,
+    images: resolveProductImages(product.images),
+  };
+}
 
 export async function getGlobalDiscountPercent(): Promise<number> {
   await connectDB();
@@ -31,7 +39,7 @@ export async function getCategories(): Promise<CategoryDTO[]> {
   for (const product of coverProducts) {
     const key = String(product.category);
     if (!coverMap.has(key) && product.images?.[0]) {
-      coverMap.set(key, product.images[0]);
+      coverMap.set(key, resolveProductImage(product.images[0]));
     }
   }
 
@@ -66,14 +74,14 @@ export async function getProducts(categorySlug?: string): Promise<ProductDTO[]> 
     .sort({ createdAt: -1 })
     .lean();
 
-  return serialize(products as unknown as ProductDTO[]);
+  return serialize(products as unknown as ProductDTO[]).map(normalizeProduct);
 }
 
 export async function getProductById(id: string): Promise<ProductDTO | null> {
   await connectDB();
   const product = await Product.findById(id).populate("category").lean();
   if (!product) return null;
-  return serialize(product as unknown as ProductDTO);
+  return normalizeProduct(serialize(product as unknown as ProductDTO));
 }
 
 export async function getDashboardStats() {

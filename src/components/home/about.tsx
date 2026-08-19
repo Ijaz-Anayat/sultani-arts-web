@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { SITE_IMAGES } from "@/lib/site-images";
 import { RevealOnScroll } from "@/components/reveal-on-scroll";
 
 export function About() {
@@ -9,7 +10,7 @@ export function About() {
           <div className="relative mx-auto w-full max-w-lg lg:max-w-none">
           <div className="relative aspect-[4/5] overflow-hidden bg-cream">
             <Image
-              src="/images/about.jpg"
+              src={SITE_IMAGES.about}
               alt="Sacred manuscript and Arabic calligraphy"
               fill
               className="object-cover"

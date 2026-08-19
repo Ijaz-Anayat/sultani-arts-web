@@ -8,6 +8,7 @@ import { RevealOnScroll } from "@/components/reveal-on-scroll";
 import { useStore } from "@/components/store-provider";
 import { getDiscountedPrice } from "@/lib/pricing";
 import { findFirstAvailableSizeIndex, isSizeInStock } from "@/lib/product-sizes";
+import { resolveProductImage } from "@/lib/site-images";
 import type { ProductDTO } from "@/lib/types";
 
 export function ProductCard({
@@ -22,7 +23,7 @@ export function ProductCard({
   const { addToCart, toggleWishlist, isWishlisted, setCartOpen, globalDiscountPercent } =
     useStore();
   const saved = isWishlisted(product._id);
-  const image = product.images[0] ?? "/images/hero.jpg";
+  const image = resolveProductImage(product.images[0]);
   const categoryName =
     typeof product.category === "object" ? product.category.name : "";
   const defaultSizeIndex = findFirstAvailableSizeIndex(product.sizes);

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { PriceDisplay } from "@/components/price-display";
 import { useStore } from "@/components/store-provider";
 import { formatPrice, getDiscountedPrice } from "@/lib/pricing";
+import { resolveProductImage, resolveProductImages } from "@/lib/site-images";
 import {
   findFirstAvailableSizeIndex,
   getSizeStock,
@@ -17,9 +18,10 @@ export function ProductDetails({ product }: { product: ProductDTO }) {
   const [selectedIndex, setSelectedIndex] = useState(() =>
     findFirstAvailableSizeIndex(product.sizes),
   );
+  const images = resolveProductImages(product.images);
   const [imageIndex, setImageIndex] = useState(0);
   const size = product.sizes[selectedIndex] ?? product.sizes[0];
-  const image = product.images[imageIndex] ?? product.images[0];
+  const image = images[imageIndex] ?? images[0];
   const categoryName =
     typeof product.category === "object" ? product.category.name : "";
   const productDiscountPercent = product.discountPercent ?? 0;
@@ -47,9 +49,9 @@ export function ProductDetails({ product }: { product: ProductDTO }) {
             />
           ) : null}
         </div>
-        {product.images.length > 1 ? (
+        {images.length > 1 ? (
           <div className="mt-3 grid grid-cols-4 gap-2">
-            {product.images.map((url, index) => (
+            {images.map((url, index) => (
               <button
                 key={url}
                 type="button"

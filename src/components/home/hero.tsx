@@ -1,12 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { SITE_IMAGES } from "@/lib/site-images";
 
 export function Hero() {
   return (
     <section className="relative isolate min-h-[calc(100svh-4.25rem)] overflow-hidden bg-ink sm:min-h-[88vh]">
       <Image
-        src="/images/hero.jpg"
+        src={SITE_IMAGES.hero}
         alt="Arched hallway illuminated with Arabic calligraphy"
         fill
         priority

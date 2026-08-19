@@ -1,12 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
+import { SITE_IMAGES } from "@/lib/site-images";
 import { RevealOnScroll } from "@/components/reveal-on-scroll";
 
 export function ArtShowcase() {
   return (
     <section className="relative isolate min-h-[70svh] overflow-hidden sm:min-h-[62vh]">
       <Image
-        src="/images/showcase.jpg"
+        src={SITE_IMAGES.showcase}
         alt="Gold Islamic calligraphy and geometric ornament"
         fill
         className="object-cover object-center"

@@ -1,6 +1,7 @@
 import { config } from "dotenv";
 import { resolve } from "node:path";
 import mongoose from "mongoose";
+import { SEED_PRODUCT_IMAGES, SITE_IMAGES } from "../src/lib/site-images";
 
 config({ path: resolve(process.cwd(), ".env.local") });
 
@@ -19,9 +20,7 @@ const SAMPLE_PRODUCTS = [
     description:
       "Hand-painted Islamic calligraphy on a marbled background with a natural wood frame. A serene focal piece for living rooms and prayer spaces.",
     categorySlug: "oil-painting",
-    images: [
-      "https://images.unsplash.com/photo-1564760055775-d263b8f3f1a6?auto=format&fit=crop&w=1200&q=80",
-    ],
+    images: [SEED_PRODUCT_IMAGES["La Ilaha Illallah — Marbled Calligraphy Oil Painting"]],
     sizes: DEFAULT_SIZES,
     discountPercent: 15,
   },
@@ -30,9 +29,7 @@ const SAMPLE_PRODUCTS = [
     description:
       "Classic Ayat al-Kursi rendered in gold leaf on premium canvas. Museum-quality finish with rich texture and depth.",
     categorySlug: "canvas",
-    images: [
-      "https://images.unsplash.com/photo-1541961017774-22349e4a1262?auto=format&fit=crop&w=1200&q=80",
-    ],
+    images: [SEED_PRODUCT_IMAGES["Ayat al-Kursi — Gold Leaf Canvas"]],
     sizes: [
       { label: "Small (12x16 in)", price: 450, stock: 4 },
       { label: "Medium (16x20 in)", price: 1500, stock: 3 },
@@ -45,9 +42,7 @@ const SAMPLE_PRODUCTS = [
     description:
       "Elegant Bismillah composition in contemporary naskh script. Ideal for entryways, offices, and gifting.",
     categorySlug: "calligraphy",
-    images: [
-      "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=1200&q=80",
-    ],
+    images: [SEED_PRODUCT_IMAGES["Bismillah — Contemporary Naskh Panel"]],
     sizes: [
       { label: "Small (12x16 in)", price: 350, stock: 6 },
       { label: "Medium (16x20 in)", price: 1100, stock: 4 },
@@ -60,9 +55,7 @@ const SAMPLE_PRODUCTS = [
     description:
       "Surah Al-Fatiha in balanced proportions with a soft parchment tone palette and archival framing.",
     categorySlug: "calligraphy",
-    images: [
-      "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=1200&q=80",
-    ],
+    images: [SEED_PRODUCT_IMAGES["Al-Fatiha — Framed Wall Art"]],
     sizes: [
       { label: "Small (12x16 in)", price: 400, stock: 3 },
       { label: "Medium (16x20 in)", price: 1300, stock: 2 },
@@ -75,9 +68,7 @@ const SAMPLE_PRODUCTS = [
     description:
       "Modern geometric interpretation of Tawhid with layered gold accents. A statement piece for minimal interiors.",
     categorySlug: "canvas",
-    images: [
-      "https://images.unsplash.com/photo-1547891654-da6684e177b2?auto=format&fit=crop&w=1200&q=80",
-    ],
+    images: [SEED_PRODUCT_IMAGES["Geometric Tawhid Study — Canvas Print"]],
     sizes: [
       { label: "Small (12x16 in)", price: 280, stock: 8 },
       { label: "Medium (16x20 in)", price: 950, stock: 5 },
@@ -90,9 +81,7 @@ const SAMPLE_PRODUCTS = [
     description:
       "Floral kufic composition with deep emerald and gold tones. Hand-finished details on stretched canvas.",
     categorySlug: "oil-painting",
-    images: [
-      "https://images.unsplash.com/photo-1578301978693-85fa9d032843?auto=format&fit=crop&w=1200&q=80",
-    ],
+    images: [SEED_PRODUCT_IMAGES["Floral Kufic Panel — Oil on Canvas"]],
     sizes: [
       { label: "Small (12x16 in)", price: 520, stock: 2 },
       { label: "Medium (16x20 in)", price: 1650, stock: 2 },
@@ -101,6 +90,13 @@ const SAMPLE_PRODUCTS = [
     discountPercent: 12,
   },
 ];
+
+function imageForTitle(title: string) {
+  return (
+    SEED_PRODUCT_IMAGES[title as keyof typeof SEED_PRODUCT_IMAGES] ??
+    SITE_IMAGES.productFallback
+  );
+}
 
 async function seedProducts() {
   if (!MONGODB_URI) {
@@ -120,7 +116,19 @@ async function seedProducts() {
 
     const existing = await Product.findOne({ title: item.title });
     if (existing) {
-      console.log(`Already exists: ${item.title}`);
+      await Product.updateOne(
+        { _id: existing._id },
+        {
+          $set: {
+            images: item.images,
+            description: item.description,
+            sizes: item.sizes,
+            discountPercent: item.discountPercent,
+            inStock: item.sizes.some((size) => size.stock > 0),
+          },
+        },
+      );
+      console.log(`Product updated: ${item.title}`);
       continue;
     }
 
@@ -134,6 +142,22 @@ async function seedProducts() {
       inStock: item.sizes.some((size) => size.stock > 0),
     });
     console.log(`Product added: ${item.title}`);
+  }
+
+  const allProducts = await Product.find();
+  for (const product of allProducts) {
+    const firstImage = product.images?.[0] ?? "";
+    const needsFix =
+      !firstImage ||
+      firstImage.startsWith("/images/") ||
+      (!firstImage.includes("cloudinary.com") &&
+        !firstImage.includes("unsplash.com"));
+
+    if (needsFix) {
+      product.images = [imageForTitle(product.title)];
+      await product.save();
+      console.log(`Image fixed: ${product.title}`);
+    }
   }
 
   const count = await Product.countDocuments();

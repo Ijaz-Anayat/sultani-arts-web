@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { RevealOnScroll } from "@/components/reveal-on-scroll";
+import { DEFAULT_CATEGORY_IMAGE } from "@/lib/site-images";
 import { getCategories } from "@/lib/queries";
 import type { CategoryDTO } from "@/lib/types";
 
@@ -93,7 +94,7 @@ function CategoryCard({
         className="group relative block h-full overflow-hidden bg-cream"
       >
       <Image
-        src={category.image || "/images/hero.jpg"}
+        src={category.image || DEFAULT_CATEGORY_IMAGE}
         alt={category.name}
         fill
         className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
