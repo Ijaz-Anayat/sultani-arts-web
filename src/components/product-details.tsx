@@ -35,16 +35,16 @@ export function ProductDetails({ product }: { product: ProductDTO }) {
   const anySizeInStock = product.inStock && product.sizes.some((entry) => isSizeInStock(entry));
 
   return (
-    <div className="mx-auto grid w-full max-w-5xl gap-8 lg:grid-cols-[minmax(0,24rem)_minmax(0,28rem)] lg:items-start lg:justify-center lg:gap-10">
-      <div className="mx-auto w-full max-w-xs sm:max-w-sm lg:mx-0 lg:max-w-none">
-        <div className="relative aspect-[5/6] max-h-[min(52vh,420px)] w-full overflow-hidden bg-parchment sm:aspect-[4/5]">
+    <div className="mx-auto grid w-full max-w-6xl gap-8 lg:grid-cols-[minmax(0,28rem)_minmax(0,26rem)] lg:items-start lg:justify-center lg:gap-10">
+      <div className="mx-auto w-full max-w-sm sm:max-w-md lg:mx-0 lg:max-w-none">
+        <div className="relative aspect-[5/6] max-h-[min(58vh,480px)] w-full overflow-hidden bg-parchment sm:aspect-[4/5]">
           {image ? (
             <Image
               src={image}
               alt={product.title}
               fill
-              className="object-contain p-3"
-              sizes="(max-width: 1024px) 80vw, 420px"
+              className="object-contain p-2"
+              sizes="(max-width: 1024px) 85vw, 480px"
               priority
             />
           ) : null}
