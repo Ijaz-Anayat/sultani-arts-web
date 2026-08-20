@@ -59,3 +59,12 @@ export type OrderDTO = {
   status: OrderStatus;
   createdAt: string;
 };
+
+export type ReviewDTO = {
+  _id: string;
+  name: string;
+  location: string;
+  rating: number;
+  body: string;
+  postedAt: string;
+};

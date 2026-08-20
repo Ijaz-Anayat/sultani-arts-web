@@ -5,7 +5,10 @@ import { serialize } from "@/lib/utils";
 import { Category } from "@/models/Category";
 import { Product } from "@/models/Product";
 import { Order } from "@/models/Order";
+import { Review } from "@/models/Review";
 import { Settings } from "@/models/Settings";
+import { REVIEW_POOL } from "@/lib/review-pool-data";
+import { pickReviewIndexes, type ReviewDTO } from "@/lib/reviews";
 import type { CategoryDTO, ProductDTO, OrderDTO } from "@/lib/types";
 
 function normalizeProduct<T extends ProductDTO>(product: T): T {
@@ -82,6 +85,62 @@ export async function getProductById(id: string): Promise<ProductDTO | null> {
   const product = await Product.findById(id).populate("category").lean();
   if (!product) return null;
   return normalizeProduct(serialize(product as unknown as ProductDTO));
+}
+
+function toReviewDTO(review: {
+  _id?: unknown;
+  name: string;
+  location: string;
+  rating: number;
+  body: string;
+  postedAt: Date | string;
+  index?: number;
+}): ReviewDTO {
+  const postedAt =
+    review.postedAt instanceof Date
+      ? review.postedAt.toISOString()
+      : new Date(review.postedAt).toISOString();
+
+  return {
+    _id: review._id ? String(review._id) : `pool-${review.index ?? review.name}`,
+    name: review.name,
+    location: review.location,
+    rating: review.rating,
+    body: review.body,
+    postedAt,
+  };
+}
+
+export async function getReviewsForProduct(productId: string): Promise<ReviewDTO[]> {
+  await connectDB();
+
+  let pool: Array<{
+    _id?: unknown;
+    name: string;
+    location: string;
+    rating: number;
+    body: string;
+    postedAt: Date | string;
+    index?: number;
+  }> = await Review.find().sort({ index: 1 }).lean();
+
+  if (pool.length < 4) {
+    const now = Date.now();
+    pool = REVIEW_POOL.map((review, index) => ({
+      index,
+      name: review.name,
+      location: review.location,
+      rating: review.rating,
+      body: review.body,
+      postedAt: new Date(now - review.daysAgo * 24 * 60 * 60 * 1000),
+    }));
+  }
+
+  return pickReviewIndexes(productId, pool.length)
+    .map((index) => pool[index])
+    .filter(Boolean)
+    .map(toReviewDTO)
+    .sort((left, right) => +new Date(right.postedAt) - +new Date(left.postedAt));
 }
 
 export async function getDashboardStats() {
