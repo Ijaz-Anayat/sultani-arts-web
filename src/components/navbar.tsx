@@ -75,23 +75,13 @@ export function Navbar() {
             >
               <Search size={18} strokeWidth={1.5} />
             </button>
-            {isAdmin ? (
-              <Link
-                href="/admin/dashboard"
-                className="hidden h-10 w-10 items-center justify-center text-ink-soft transition-colors hover:text-gold-deep sm:flex"
-                aria-label="Admin dashboard"
-              >
-                <User size={18} strokeWidth={1.5} />
-              </Link>
-            ) : (
-              <Link
-                href="/admin/login"
-                className="hidden h-10 w-10 items-center justify-center text-ink-soft transition-colors hover:text-gold-deep sm:flex"
-                aria-label="Admin login"
-              >
-                <User size={18} strokeWidth={1.5} />
-              </Link>
-            )}
+            <Link
+              href="/admin/login"
+              className="hidden h-10 w-10 items-center justify-center text-ink-soft transition-colors hover:text-gold-deep sm:flex"
+              aria-label="Studio login"
+            >
+              <User size={18} strokeWidth={1.5} />
+            </Link>
             <button
               type="button"
               onClick={() => setCartOpen(true)}

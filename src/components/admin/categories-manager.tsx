@@ -9,6 +9,9 @@ export function CategoriesManager({ categories }: { categories: CategoryDTO[] })
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editPending, setEditPending] = useState(false);
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -26,6 +29,44 @@ export function CategoriesManager({ categories }: { categories: CategoryDTO[] })
       return;
     }
     setName("");
+    router.refresh();
+  }
+
+  function startEdit(category: CategoryDTO) {
+    setEditingId(category._id);
+    setEditName(category.name);
+    setError("");
+  }
+
+  function cancelEdit() {
+    setEditingId(null);
+    setEditName("");
+    setEditPending(false);
+  }
+
+  async function saveEdit(id: string) {
+    const trimmed = editName.trim();
+    if (!trimmed) {
+      setError("Category name is required");
+      return;
+    }
+
+    setEditPending(true);
+    setError("");
+    const response = await fetch(`/api/categories/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: trimmed }),
+    });
+    const body = (await response.json()) as { error?: string };
+    setEditPending(false);
+
+    if (!response.ok) {
+      setError(body.error || "Could not update category");
+      return;
+    }
+
+    cancelEdit();
     router.refresh();
   }
 
@@ -54,22 +95,67 @@ export function CategoriesManager({ categories }: { categories: CategoryDTO[] })
             </tr>
           </thead>
           <tbody>
-            {categories.map((category) => (
-              <tr key={category._id} className="border-t border-line">
-                <td className="px-4 py-3 font-serif">{category.name}</td>
-                <td className="px-4 py-3 text-sm text-muted">{category.slug}</td>
-                <td className="px-4 py-3">{category.productCount ?? 0}</td>
-                <td className="px-4 py-3 text-right">
-                  <button
-                    type="button"
-                    onClick={() => remove(category._id)}
-                    className="font-sans text-[0.65rem] tracking-[0.16em] text-muted uppercase hover:text-ink"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {categories.map((category) => {
+              const isEditing = editingId === category._id;
+
+              return (
+                <tr key={category._id} className="border-t border-line">
+                  <td className="px-4 py-3 font-serif">
+                    {isEditing ? (
+                      <input
+                        value={editName}
+                        onChange={(event) => setEditName(event.target.value)}
+                        className="w-full min-w-[180px] border border-line bg-ivory px-3 py-2 font-serif text-base outline-none focus:border-gold"
+                        autoFocus
+                      />
+                    ) : (
+                      category.name
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-muted">{category.slug}</td>
+                  <td className="px-4 py-3">{category.productCount ?? 0}</td>
+                  <td className="px-4 py-3 text-right">
+                    {isEditing ? (
+                      <div className="flex justify-end gap-3">
+                        <button
+                          type="button"
+                          onClick={() => saveEdit(category._id)}
+                          disabled={editPending}
+                          className="font-sans text-[0.65rem] tracking-[0.16em] text-ink uppercase hover:text-gold-deep disabled:opacity-60"
+                        >
+                          {editPending ? "Saving…" : "Save"}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={cancelEdit}
+                          disabled={editPending}
+                          className="font-sans text-[0.65rem] tracking-[0.16em] text-muted uppercase hover:text-ink"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex justify-end gap-3">
+                        <button
+                          type="button"
+                          onClick={() => startEdit(category)}
+                          className="font-sans text-[0.65rem] tracking-[0.16em] text-muted uppercase hover:text-ink"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => remove(category._id)}
+                          className="font-sans text-[0.65rem] tracking-[0.16em] text-muted uppercase hover:text-ink"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

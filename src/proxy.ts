@@ -13,10 +13,6 @@ export const proxy = auth((request) => {
     );
   }
 
-  if (isLogin && isAdmin) {
-    return NextResponse.redirect(new URL("/admin/dashboard", request.url));
-  }
-
   if (!isLogin && !isAdmin) {
     const loginUrl = new URL("/admin/login", request.url);
     loginUrl.searchParams.set("callbackUrl", pathname);
