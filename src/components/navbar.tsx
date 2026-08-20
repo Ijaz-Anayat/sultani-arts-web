@@ -7,13 +7,14 @@ import { Menu, Search, ShoppingBag, User, X } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import { Logo } from "@/components/logo";
 import { useStore } from "@/components/store-provider";
+import { isAdminSession } from "@/lib/auth-utils";
 import { formatPrice } from "@/lib/pricing";
 import { navLinks } from "@/lib/data";
 
 export function Navbar() {
   const { cart, cartCount, cartOpen, setCartOpen, removeFromCart } = useStore();
-  const { data: session } = useSession();
-  const isAdmin = session?.user?.role === "admin";
+  const { data: session, status } = useSession();
+  const isAdmin = status === "authenticated" && isAdminSession(session);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);

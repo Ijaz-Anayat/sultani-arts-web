@@ -11,16 +11,21 @@ export const authConfig = {
   providers: [],
   callbacks: {
     jwt({ token, user }) {
-      if (user) {
+      if (user?.id) {
         token.id = user.id;
-        token.role = "admin";
+        token.role = user.role ?? "admin";
       }
       return token;
     },
     session({ session, token }) {
       if (session.user) {
-        session.user.id = typeof token.id === "string" ? token.id : "";
-        session.user.role = "admin";
+        if (token.role === "admin" && typeof token.id === "string" && token.id) {
+          session.user.id = token.id;
+          session.user.role = "admin";
+        } else {
+          session.user.id = "";
+          session.user.role = undefined;
+        }
       }
       return session;
     },
