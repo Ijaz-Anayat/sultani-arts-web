@@ -62,7 +62,7 @@ export default async function ShopPage({
             </p>
           </RevealOnScroll>
         ) : (
-          <div className="mt-12 grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-6 sm:gap-y-12 lg:grid-cols-4">
+          <div className="mt-12 grid grid-cols-2 items-stretch gap-x-3 gap-y-8 sm:gap-x-6 sm:gap-y-12 lg:grid-cols-4">
             {products.map((product, index) => (
               <ProductCard key={product._id} product={product} revealDelay={index * 70} />
             ))}

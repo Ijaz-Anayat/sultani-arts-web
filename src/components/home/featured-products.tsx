@@ -41,7 +41,7 @@ export async function FeaturedProducts({ limit = 8, compact = false }: Props) {
           </p>
         ) : (
           <div
-            className={`grid grid-cols-2 gap-x-3 gap-y-6 sm:gap-x-5 sm:gap-y-8 ${
+            className={`grid grid-cols-2 items-stretch gap-x-3 gap-y-6 sm:gap-x-5 sm:gap-y-8 ${
               compact ? "lg:grid-cols-4" : "lg:grid-cols-4"
             }`}
           >
