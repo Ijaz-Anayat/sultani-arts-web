@@ -8,14 +8,14 @@ export function Hero() {
     <section className="relative isolate min-h-[calc(100svh-4.25rem)] overflow-hidden bg-ink sm:min-h-[88vh]">
       <Image
         src={SITE_IMAGES.hero}
-        alt="Arched hallway illuminated with Arabic calligraphy"
+        alt="Calligrapher writing Arabic script at the atelier desk"
         fill
         priority
-        className="object-cover object-[center_30%] sm:object-center"
+        className="object-cover object-[center_45%] sm:object-center"
         sizes="100vw"
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/60 to-ink/20 sm:via-ink/55 sm:to-ink/15" />
-      <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-ink/20 to-ink/25 sm:from-ink/50 sm:via-transparent sm:to-ink/20" />
+      <div className="absolute inset-0 bg-gradient-to-r from-ink/80 via-ink/45 to-transparent sm:from-ink/85 sm:via-ink/40 sm:to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-ink/35 via-transparent to-ink/15 sm:from-ink/25" />
 
       <div className="relative mx-auto flex min-h-[calc(100svh-4.25rem)] max-w-[1400px] flex-col justify-end px-4 pb-10 pt-16 sm:min-h-[88vh] sm:px-5 sm:pt-28 sm:pb-16 md:justify-center md:px-8 md:pb-20 md:pt-16">
         <div className="max-w-2xl animate-fade-up text-ivory">

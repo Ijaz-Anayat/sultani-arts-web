@@ -2,7 +2,7 @@ const unsplash = (id: string, width = 1200) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${width}&q=80`;
 
 export const SITE_IMAGES = {
-  hero: unsplash("photo-1579783902614-a3fb3927b6a5", 2000),
+  hero: "/images/hero.png",
   about: unsplash("photo-1579783902614-a3fb3927b6a5", 1400),
   showcase: unsplash("photo-1579783902614-a3fb3927b6a5", 2000),
   productFallback: unsplash("photo-1579783902614-a3fb3927b6a5", 900),
