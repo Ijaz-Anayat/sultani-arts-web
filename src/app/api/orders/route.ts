@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/mongodb";
 import { isValidObjectId, serialize } from "@/lib/utils";
 import { getDiscountedPrice } from "@/lib/pricing";
 import { getGlobalDiscountPercent } from "@/lib/queries";
+import { notifyNewOrder } from "@/lib/notify-order";
 import { getSizeStock } from "@/lib/product-sizes";
 import { Order } from "@/models/Order";
 import { Product } from "@/models/Product";
@@ -137,6 +138,17 @@ export async function POST(request: Request) {
       sizeEntry.stock = Math.max(0, getSizeStock(sizeEntry) - update.quantity);
       productDoc.inStock = productDoc.sizes.some((entry) => getSizeStock(entry) > 0);
       await productDoc.save();
+    }
+
+    try {
+      await notifyNewOrder({
+        orderId: String(order._id),
+        customer: { name, phone, address, city },
+        items,
+        totalAmount,
+      });
+    } catch (notifyError) {
+      console.error("Order email failed", notifyError);
     }
 
     return NextResponse.json(order, { status: 201 });
