@@ -1,5 +1,14 @@
+import type { Metadata } from "next";
 import { CheckoutForm } from "@/components/checkout-form";
 import { RevealOnScroll } from "@/components/reveal-on-scroll";
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Checkout",
+  description: "Complete your Sultani Arts guest order.",
+  path: "/checkout",
+  index: false,
+});
 
 export default function CheckoutPage() {
   return (

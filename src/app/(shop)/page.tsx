@@ -1,11 +1,37 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Hero } from "@/components/home/hero";
 import { FeaturedProducts } from "@/components/home/featured-products";
+import { JsonLd } from "@/components/json-ld";
 import { RevealOnScroll } from "@/components/reveal-on-scroll";
+import { SITE_CONTACT } from "@/lib/constants";
+import { SITE_DESCRIPTION, SITE_NAME, absoluteUrl, pageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Handmade Islamic Calligraphy",
+  description: SITE_DESCRIPTION,
+  path: "/",
+});
 
 export default function Home() {
   return (
     <main className="flex-1">
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: SITE_NAME,
+          url: absoluteUrl("/"),
+          email: SITE_CONTACT.email,
+          telephone: SITE_CONTACT.phone,
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: SITE_CONTACT.location,
+            addressCountry: "PK",
+          },
+          sameAs: [SITE_CONTACT.instagram, SITE_CONTACT.facebook],
+        }}
+      />
       <Hero />
       <FeaturedProducts limit={4} compact />
       <section className="px-4 py-14 sm:px-5 sm:py-20 md:px-8">

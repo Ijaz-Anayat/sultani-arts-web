@@ -1,7 +1,16 @@
+import type { Metadata } from "next";
 import { About } from "@/components/home/about";
 import { ArtShowcase } from "@/components/home/art-showcase";
 import { WhyChoose } from "@/components/home/why-choose";
 import { RevealOnScroll } from "@/components/reveal-on-scroll";
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = pageMetadata({
+  title: "About the Atelier",
+  description:
+    "Sultani Arts is a Lahore atelier for handmade Islamic and Arabic calligraphy, canvas, and oil paintings crafted for contemporary homes.",
+  path: "/about",
+});
 
 export default function AboutPage() {
   return (

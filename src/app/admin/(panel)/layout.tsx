@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
@@ -5,6 +6,10 @@ import { AdminShell } from "@/components/admin/admin-shell";
 import { isAdminSession } from "@/lib/auth-utils";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 export default async function AdminPanelLayout({ children }: { children: ReactNode }) {
   const session = await auth();

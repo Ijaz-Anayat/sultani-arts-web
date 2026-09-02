@@ -1,9 +1,36 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ProductCard } from "@/components/product-card";
 import { RevealOnScroll } from "@/components/reveal-on-scroll";
 import { getCategories, getProducts } from "@/lib/queries";
+import { pageMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string }>;
+}): Promise<Metadata> {
+  const { category } = await searchParams;
+  const categories = await getCategories().catch(() => []);
+  const active = categories.find((item) => item.slug === category);
+
+  if (active) {
+    return pageMetadata({
+      title: `${active.name} Calligraphy`,
+      description: `Shop ${active.name.toLowerCase()} pieces from Sultani Arts in Lahore. Handmade Islamic wall art with optional framing.`,
+      path: `/shop?category=${active.slug}`,
+    });
+  }
+
+  return pageMetadata({
+    title: "Shop Calligraphy Art",
+    description:
+      "Browse handmade Islamic calligraphy, canvas, and oil paintings. Choose size, optional frame, and order from Township, Lahore.",
+    path: "/shop",
+  });
+}
 
 export default async function ShopPage({
   searchParams,

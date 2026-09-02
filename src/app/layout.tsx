@@ -4,6 +4,14 @@ import { Cormorant_Garamond, Great_Vibes, Outfit } from "next/font/google";
 import { AuthSessionProvider } from "@/components/auth-session-provider";
 import { StoreProvider } from "@/components/store-provider";
 import { getGlobalDiscountPercent } from "@/lib/queries";
+import {
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_TAGLINE,
+  absoluteUrl,
+  getSiteUrl,
+} from "@/lib/seo";
+import { SITE_IMAGES } from "@/lib/site-images";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -25,9 +33,40 @@ const greatVibes = Great_Vibes({
 });
 
 export const metadata: Metadata = {
-  title: "Sultani Arts | Calligraphy & Artistic Collections",
-  description:
-    "A modern atelier for Islamic and Arabic calligraphy, wall art, and custom artistic pieces. Where tradition meets contemporary design.",
+  metadataBase: new URL(getSiteUrl()),
+  title: {
+    default: `${SITE_NAME} | ${SITE_TAGLINE}`,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  keywords: [
+    "Islamic calligraphy",
+    "Arabic calligraphy",
+    "wall art Pakistan",
+    "canvas art Lahore",
+    "Ayat al-Kursi",
+    "handmade calligraphy",
+    "Sultani Arts",
+  ],
+  authors: [{ name: SITE_NAME }],
+  alternates: { canonical: absoluteUrl("/") },
+  robots: { index: true, follow: true },
+  openGraph: {
+    type: "website",
+    locale: "en_PK",
+    siteName: SITE_NAME,
+    title: `${SITE_NAME} | ${SITE_TAGLINE}`,
+    description: SITE_DESCRIPTION,
+    url: absoluteUrl("/"),
+    images: [{ url: absoluteUrl(SITE_IMAGES.hero), alt: "Sultani Arts calligraphy atelier" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE_NAME} | ${SITE_TAGLINE}`,
+    description: SITE_DESCRIPTION,
+    images: [absoluteUrl(SITE_IMAGES.hero)],
+  },
   icons: {
     icon: "/icon.png",
     apple: "/apple-touch-icon.png",

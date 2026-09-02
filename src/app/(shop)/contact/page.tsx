@@ -1,8 +1,17 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { Newsletter } from "@/components/home/newsletter";
 import { RevealOnScroll } from "@/components/reveal-on-scroll";
 import { SITE_CONTACT } from "@/lib/constants";
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Contact",
+  description:
+    "Visit Sultani Arts in Township, Lahore or message us on WhatsApp for commissions, framing advice, and order support.",
+  path: "/contact",
+});
 
 export default function ContactPage() {
   return (

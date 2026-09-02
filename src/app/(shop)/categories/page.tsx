@@ -1,5 +1,14 @@
+import type { Metadata } from "next";
 import { FeaturedCategories } from "@/components/home/featured-categories";
 import { RevealOnScroll } from "@/components/reveal-on-scroll";
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Calligraphy Categories",
+  description:
+    "Explore Sultani Arts collections: Islamic calligraphy, canvas prints, and oil paintings curated for contemporary interiors.",
+  path: "/categories",
+});
 
 export default function CategoriesPage() {
   return (
