@@ -233,7 +233,7 @@ export function Navbar() {
           ) : (
             <ul className="space-y-5">
               {cart.map((item) => (
-                <li key={`${item.productId}-${item.size}`} className="flex gap-4">
+                <li key={`${item.productId}-${item.size}-${item.frameId ?? "none"}`} className="flex gap-4">
                   <div className="relative h-20 w-16 overflow-hidden bg-cream">
                     <Image
                       src={item.image}
@@ -248,7 +248,8 @@ export function Navbar() {
                       {item.title}
                     </p>
                     <p className="mt-1 text-sm text-muted">
-                      {item.size} · Qty {item.quantity} ·{" "}
+                      {item.size}
+                      {item.frameColor ? ` · ${item.frameColor} frame` : ""} · Qty {item.quantity} ·{" "}
                       {item.originalPrice && item.originalPrice > item.price ? (
                         <>
                           {formatPrice(item.price)}{" "}
@@ -260,7 +261,7 @@ export function Navbar() {
                     </p>
                     <button
                       type="button"
-                      onClick={() => removeFromCart(item.productId, item.size)}
+                      onClick={() => removeFromCart(item.productId, item.size, item.frameId)}
                       className="mt-1 text-xs tracking-wide text-gold-deep uppercase hover:underline"
                     >
                       Remove

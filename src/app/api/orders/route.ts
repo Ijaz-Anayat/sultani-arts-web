@@ -4,9 +4,11 @@ import { connectDB } from "@/lib/mongodb";
 import { isValidObjectId, serialize } from "@/lib/utils";
 import { getDiscountedPrice } from "@/lib/pricing";
 import { getGlobalDiscountPercent } from "@/lib/queries";
+import { frameMatchesSize } from "@/lib/frames";
 import { notifyNewOrder } from "@/lib/notify-order";
 import { getSizeStock } from "@/lib/product-sizes";
 import { Order } from "@/models/Order";
+import { Frame } from "@/models/Frame";
 import { Product } from "@/models/Product";
 
 export async function GET() {
@@ -36,6 +38,7 @@ export async function POST(request: Request) {
         productId?: string;
         size?: string;
         quantity?: number;
+        frameId?: string;
       }>;
     };
 
@@ -103,13 +106,32 @@ export async function POST(request: Request) {
         product.discountPercent ?? 0,
       );
 
+      let frameColor: string | undefined;
+      let framePrice = 0;
+      if (item.frameId) {
+        if (!isValidObjectId(item.frameId)) {
+          return NextResponse.json({ error: "Selected frame is invalid" }, { status: 400 });
+        }
+        const frame = await Frame.findById(item.frameId).lean();
+        if (!frame || !frameMatchesSize(frame.sizeLabel, size.label)) {
+          return NextResponse.json(
+            { error: `Selected frame is not available for ${product.title}` },
+            { status: 400 },
+          );
+        }
+        frameColor = frame.color;
+        framePrice = frame.price;
+      }
+
       items.push({
         product: product._id,
         title: product.title,
         image: product.images[0],
         size: size.label,
-        price: unitPrice,
+        price: unitPrice + framePrice,
         quantity,
+        frameColor,
+        framePrice: framePrice || undefined,
       });
 
       stockUpdates.push({

@@ -17,6 +17,7 @@ const COLLECTIONS = [
   "orders",
   "newslettersubscribers",
   "reviews",
+  "frames",
 ] as const;
 
 const SEED_CATEGORIES = ["Canvas", "Oil Painting", "Calligraphy"];

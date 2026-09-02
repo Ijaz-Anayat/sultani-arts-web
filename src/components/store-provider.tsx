@@ -18,7 +18,7 @@ type StoreContextValue = {
   cartCount: number;
   globalDiscountPercent: number;
   addToCart: (item: Omit<CartItem, "quantity"> & { quantity?: number }) => void;
-  removeFromCart: (productId: string, size: string) => void;
+  removeFromCart: (productId: string, size: string, frameId?: string) => void;
   toggleWishlist: (id: string) => void;
   isWishlisted: (id: string) => boolean;
   cartOpen: boolean;
@@ -76,12 +76,18 @@ export function StoreProvider({
     (item: Omit<CartItem, "quantity"> & { quantity?: number }) => {
       const quantity = item.quantity ?? 1;
       setCart((current) => {
+        const frameKey = item.frameId ?? "";
         const existing = current.find(
-          (entry) => entry.productId === item.productId && entry.size === item.size,
+          (entry) =>
+            entry.productId === item.productId &&
+            entry.size === item.size &&
+            (entry.frameId ?? "") === frameKey,
         );
         if (existing) {
           return current.map((entry) =>
-            entry.productId === item.productId && entry.size === item.size
+            entry.productId === item.productId &&
+            entry.size === item.size &&
+            (entry.frameId ?? "") === frameKey
               ? { ...entry, quantity: entry.quantity + quantity }
               : entry,
           );
@@ -96,6 +102,9 @@ export function StoreProvider({
             price: item.price,
             originalPrice: item.originalPrice,
             quantity,
+            frameId: item.frameId,
+            frameColor: item.frameColor,
+            framePrice: item.framePrice,
           },
         ];
       });
@@ -104,9 +113,17 @@ export function StoreProvider({
     [showToast],
   );
 
-  const removeFromCart = useCallback((productId: string, size: string) => {
+  const removeFromCart = useCallback((productId: string, size: string, frameId?: string) => {
+    const frameKey = frameId ?? "";
     setCart((current) =>
-      current.filter((item) => !(item.productId === productId && item.size === size)),
+      current.filter(
+        (item) =>
+          !(
+            item.productId === productId &&
+            item.size === size &&
+            (item.frameId ?? "") === frameKey
+          ),
+      ),
     );
   }, []);
 

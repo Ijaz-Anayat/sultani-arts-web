@@ -15,6 +15,8 @@ const orderSchema = new Schema({
       size: String,
       price: Number,
       quantity: Number,
+      frameColor: String,
+      framePrice: Number,
     },
   ],
   totalAmount: { type: Number, required: true, min: 0 },

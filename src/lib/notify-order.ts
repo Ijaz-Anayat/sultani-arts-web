@@ -6,6 +6,8 @@ type OrderNotifyItem = {
   size: string;
   price: number;
   quantity: number;
+  frameColor?: string;
+  framePrice?: number;
 };
 
 type OrderNotifyPayload = {
@@ -57,7 +59,7 @@ function buildOrderEmailHtml(payload: OrderNotifyPayload) {
               ${escapeHtml(item.title)}
             </p>
             <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#8c6a35;">
-              ${escapeHtml(item.size)}
+              ${escapeHtml(item.size)}${item.frameColor ? ` · ${escapeHtml(item.frameColor)} frame` : ""}
             </p>
           </td>
           <td align="center" style="padding:14px 12px;border-bottom:1px solid #e4d9c8;background:${background};font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#3f3831;white-space:nowrap;">
@@ -183,7 +185,10 @@ export async function notifyNewOrder(payload: OrderNotifyPayload) {
   }
 
   const itemsText = payload.items
-    .map((item) => `- ${item.title} (${item.size}) × ${item.quantity} = ${formatPrice(item.price * item.quantity)}`)
+    .map(
+      (item) =>
+        `- ${item.title} (${item.size}${item.frameColor ? `, ${item.frameColor} frame` : ""}) × ${item.quantity} = ${formatPrice(item.price * item.quantity)}`,
+    )
     .join("\n");
 
   const resend = new Resend(apiKey);

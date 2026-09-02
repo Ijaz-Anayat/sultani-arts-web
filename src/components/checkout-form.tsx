@@ -32,6 +32,7 @@ export function CheckoutForm() {
           productId: item.productId,
           size: item.size,
           quantity: item.quantity,
+          frameId: item.frameId,
         })),
       }),
     });
@@ -135,14 +136,15 @@ export function CheckoutForm() {
         <h2 className="font-serif text-2xl">Summary</h2>
         <ul className="mt-5 space-y-4">
           {cart.map((item) => (
-            <li key={`${item.productId}-${item.size}`} className="flex gap-3">
+            <li key={`${item.productId}-${item.size}-${item.frameId ?? "none"}`} className="flex gap-3">
               <div className="relative h-16 w-12 overflow-hidden bg-parchment">
                 <Image src={item.image} alt="" fill className="object-cover" sizes="48px" />
               </div>
               <div className="min-w-0 flex-1">
                 <p className="truncate font-serif">{item.title}</p>
                 <p className="text-xs text-muted">
-                  {item.size} × {item.quantity}
+                  {item.size}
+                  {item.frameColor ? ` · ${item.frameColor} frame` : ""} × {item.quantity}
                 </p>
               </div>
               <div className="text-right text-sm">

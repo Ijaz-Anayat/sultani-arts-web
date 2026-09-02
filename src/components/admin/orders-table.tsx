@@ -54,7 +54,8 @@ export function OrdersTable({ orders }: { orders: OrderDTO[] }) {
             {order.items.map((item, index) => (
               <li key={`${order._id}-${index}`} className="flex justify-between text-sm">
                 <span>
-                  {item.title} · {item.size} × {item.quantity}
+                  {item.title} · {item.size}
+                  {item.frameColor ? ` · ${item.frameColor} frame` : ""} × {item.quantity}
                 </span>
                 <span>{formatPrice(item.price * item.quantity)}</span>
               </li>

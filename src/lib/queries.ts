@@ -5,11 +5,13 @@ import { serialize } from "@/lib/utils";
 import { Category } from "@/models/Category";
 import { Product } from "@/models/Product";
 import { Order } from "@/models/Order";
+import { Frame } from "@/models/Frame";
 import { Review } from "@/models/Review";
 import { Settings } from "@/models/Settings";
+import { DEFAULT_SIZES } from "@/lib/constants";
 import { REVIEW_POOL } from "@/lib/review-pool-data";
 import { pickReviewIndexes, type ReviewDTO } from "@/lib/reviews";
-import type { CategoryDTO, ProductDTO, OrderDTO } from "@/lib/types";
+import type { CategoryDTO, FrameDTO, ProductDTO, OrderDTO } from "@/lib/types";
 
 function normalizeProduct<T extends ProductDTO>(product: T): T {
   return {
@@ -159,4 +161,30 @@ export async function getDashboardStats() {
     orderCount,
     recentOrders: serialize(recentOrders as unknown as OrderDTO[]),
   };
+}
+
+const DEFAULT_FRAME_COLORS = [
+  { color: "Black", prices: [800, 1200, 1800] },
+  { color: "Gold", prices: [1100, 1600, 2300] },
+  { color: "Walnut", prices: [950, 1400, 2000] },
+] as const;
+
+export async function getFrames(): Promise<FrameDTO[]> {
+  await connectDB();
+
+  let frames = await Frame.find().sort({ sizeLabel: 1, color: 1 }).lean();
+  if (frames.length === 0) {
+    await Frame.insertMany(
+      DEFAULT_FRAME_COLORS.flatMap((entry) =>
+        DEFAULT_SIZES.map((size, index) => ({
+          sizeLabel: size.label,
+          color: entry.color,
+          price: entry.prices[index],
+        })),
+      ),
+    );
+    frames = await Frame.find().sort({ sizeLabel: 1, color: 1 }).lean();
+  }
+
+  return serialize(frames as unknown as FrameDTO[]);
 }

@@ -27,6 +27,14 @@ export type ProductDTO = {
   createdAt?: string;
 };
 
+export type FrameDTO = {
+  _id: string;
+  sizeLabel: string;
+  color: string;
+  price: number;
+  createdAt?: string;
+};
+
 export type CartItem = {
   productId: string;
   title: string;
@@ -35,6 +43,9 @@ export type CartItem = {
   price: number;
   originalPrice?: number;
   quantity: number;
+  frameId?: string;
+  frameColor?: string;
+  framePrice?: number;
 };
 
 export type OrderItem = {
@@ -44,6 +55,8 @@ export type OrderItem = {
   size: string;
   price: number;
   quantity: number;
+  frameColor?: string;
+  framePrice?: number;
 };
 
 export type OrderDTO = {
