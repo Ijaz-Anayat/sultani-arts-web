@@ -116,14 +116,14 @@ export function ProductCard({
       <div className={`relative overflow-hidden bg-parchment ${compact ? "mb-2 sm:mb-3" : "mb-3 sm:mb-4"}`}>
         <Link
           href={`/product/${product._id}`}
-          className={`relative block ${compact ? "aspect-[3/4] max-h-[220px] sm:max-h-[260px]" : "aspect-[4/5]"}`}
+          className={`relative block w-full overflow-hidden ${compact ? "aspect-[3/4]" : "aspect-[4/5]"}`}
         >
           <Image
             src={imageSrc}
             alt={product.title}
             fill
             onError={() => setImageSrc(SITE_IMAGES.productFallback)}
-            className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+            className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.06]"
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
           />
         </Link>
