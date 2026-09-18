@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin";
+import { CACHE_TAGS, revalidateStoreTags } from "@/lib/cache-tags";
 import { connectDB } from "@/lib/mongodb";
 import { isValidObjectId } from "@/lib/utils";
 import { Frame } from "@/models/Frame";
@@ -43,6 +44,7 @@ export async function PUT(request: Request, context: RouteContext) {
       return NextResponse.json({ error: "Frame not found" }, { status: 404 });
     }
 
+    revalidateStoreTags(CACHE_TAGS.frames);
     return NextResponse.json(frame);
   } catch (err) {
     console.error("Update frame failed", err);
@@ -65,6 +67,7 @@ export async function DELETE(_request: Request, context: RouteContext) {
     if (!deleted) {
       return NextResponse.json({ error: "Frame not found" }, { status: 404 });
     }
+    revalidateStoreTags(CACHE_TAGS.frames);
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("Delete frame failed", err);

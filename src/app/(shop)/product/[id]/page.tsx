@@ -11,8 +11,6 @@ import { resolveProductImage } from "@/lib/site-images";
 import { SITE_NAME, absoluteUrl, pageMetadata } from "@/lib/seo";
 import { isValidObjectId } from "@/lib/utils";
 
-export const dynamic = "force-dynamic";
-
 export async function generateMetadata({
   params,
 }: {

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin";
+import { CACHE_TAGS, revalidateStoreTags } from "@/lib/cache-tags";
 import { connectDB } from "@/lib/mongodb";
 import { getFrames } from "@/lib/queries";
 import { Frame } from "@/models/Frame";
@@ -37,6 +38,7 @@ export async function POST(request: Request) {
 
     await connectDB();
     const frame = await Frame.create({ sizeLabel, color, price });
+    revalidateStoreTags(CACHE_TAGS.frames);
     return NextResponse.json(frame, { status: 201 });
   } catch (err) {
     console.error("Create frame failed", err);

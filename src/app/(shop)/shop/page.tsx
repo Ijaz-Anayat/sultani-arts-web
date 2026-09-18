@@ -5,8 +5,6 @@ import { RevealOnScroll } from "@/components/reveal-on-scroll";
 import { getCategories, getProducts } from "@/lib/queries";
 import { pageMetadata } from "@/lib/seo";
 
-export const dynamic = "force-dynamic";
-
 export async function generateMetadata({
   searchParams,
 }: {

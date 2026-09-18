@@ -1,3 +1,5 @@
+import { unstable_cache } from "next/cache";
+import { CACHE_TAGS } from "@/lib/cache-tags";
 import { connectDB } from "@/lib/mongodb";
 import { CATEGORY_FALLBACK_IMAGES, DEFAULT_CATEGORY_IMAGE } from "@/lib/constants";
 import { resolveProductImage, resolveProductImages } from "@/lib/site-images";
@@ -13,6 +15,8 @@ import { REVIEW_POOL } from "@/lib/review-pool-data";
 import { pickReviewIndexes, type ReviewDTO } from "@/lib/reviews";
 import type { CategoryDTO, FrameDTO, ProductDTO, OrderDTO } from "@/lib/types";
 
+const STORE_REVALIDATE_SECONDS = 60;
+
 function normalizeProduct<T extends ProductDTO>(product: T): T {
   return {
     ...product,
@@ -20,43 +24,56 @@ function normalizeProduct<T extends ProductDTO>(product: T): T {
   };
 }
 
-export async function getGlobalDiscountPercent(): Promise<number> {
+async function fetchGlobalDiscountPercent(): Promise<number> {
   await connectDB();
   const settings = await Settings.findOne({ key: "store" }).lean();
   return settings?.globalDiscountPercent ?? 0;
 }
 
-export async function getCategories(): Promise<CategoryDTO[]> {
+export async function getGlobalDiscountPercent(): Promise<number> {
+  return unstable_cache(fetchGlobalDiscountPercent, ["global-discount"], {
+    revalidate: STORE_REVALIDATE_SECONDS,
+    tags: [CACHE_TAGS.settings],
+  })();
+}
+
+async function fetchCategories(): Promise<CategoryDTO[]> {
   await connectDB();
 
-  const [categories, counts, coverProducts] = await Promise.all([
+  const [categories, stats] = await Promise.all([
     Category.find().sort({ name: 1 }).lean(),
-    Product.aggregate<{ _id: unknown; count: number }>([
-      { $group: { _id: "$category", count: { $sum: 1 } } },
+    Product.aggregate<{ _id: unknown; count: number; image?: string }>([
+      { $sort: { createdAt: 1 } },
+      {
+        $group: {
+          _id: "$category",
+          count: { $sum: 1 },
+          image: { $first: { $arrayElemAt: ["$images", 0] } },
+        },
+      },
     ]),
-    Product.find({}, { category: 1, images: 1 })
-      .sort({ createdAt: 1 })
-      .lean(),
   ]);
 
-  const countMap = new Map(counts.map((item) => [String(item._id), item.count]));
-  const coverMap = new Map<string, string>();
-  for (const product of coverProducts) {
-    const key = String(product.category);
-    if (!coverMap.has(key) && product.images?.[0]) {
-      coverMap.set(key, resolveProductImage(product.images[0]));
-    }
-  }
+  const statsMap = new Map(
+    stats.map((item) => [
+      String(item._id),
+      {
+        count: item.count,
+        image: item.image ? resolveProductImage(item.image) : undefined,
+      },
+    ]),
+  );
 
   return categories.map((category) => {
     const id = String(category._id);
+    const entry = statsMap.get(id);
     return {
       _id: id,
       name: category.name,
       slug: category.slug,
-      productCount: countMap.get(id) ?? 0,
+      productCount: entry?.count ?? 0,
       image:
-        coverMap.get(id) ??
+        entry?.image ??
         CATEGORY_FALLBACK_IMAGES[category.slug] ??
         DEFAULT_CATEGORY_IMAGE,
       createdAt: category.createdAt ? new Date(category.createdAt).toISOString() : undefined,
@@ -64,7 +81,21 @@ export async function getCategories(): Promise<CategoryDTO[]> {
   });
 }
 
-export async function getProducts(categorySlug?: string): Promise<ProductDTO[]> {
+export async function getCategories(): Promise<CategoryDTO[]> {
+  return unstable_cache(fetchCategories, ["categories"], {
+    revalidate: STORE_REVALIDATE_SECONDS,
+    tags: [CACHE_TAGS.categories, CACHE_TAGS.products],
+  })();
+}
+
+type ProductQueryOptions = {
+  limit?: number;
+};
+
+async function fetchProducts(
+  categorySlug?: string,
+  options: ProductQueryOptions = {},
+): Promise<ProductDTO[]> {
   await connectDB();
 
   const filter: Record<string, unknown> = {};
@@ -74,19 +105,42 @@ export async function getProducts(categorySlug?: string): Promise<ProductDTO[]> 
     filter.category = category._id;
   }
 
-  const products = await Product.find(filter)
-    .populate("category")
-    .sort({ createdAt: -1 })
-    .lean();
+  let query = Product.find(filter).populate("category").sort({ createdAt: -1 });
+  if (options.limit && options.limit > 0) {
+    query = query.limit(options.limit);
+  }
 
+  const products = await query.lean();
   return serialize(products as unknown as ProductDTO[]).map(normalizeProduct);
 }
 
-export async function getProductById(id: string): Promise<ProductDTO | null> {
+export async function getProducts(
+  categorySlug?: string,
+  options: ProductQueryOptions = {},
+): Promise<ProductDTO[]> {
+  const limitKey = options.limit && options.limit > 0 ? String(options.limit) : "all";
+  return unstable_cache(
+    () => fetchProducts(categorySlug, options),
+    ["products", categorySlug ?? "all", limitKey],
+    {
+      revalidate: STORE_REVALIDATE_SECONDS,
+      tags: [CACHE_TAGS.products],
+    },
+  )();
+}
+
+async function fetchProductById(id: string): Promise<ProductDTO | null> {
   await connectDB();
   const product = await Product.findById(id).populate("category").lean();
   if (!product) return null;
   return normalizeProduct(serialize(product as unknown as ProductDTO));
+}
+
+export async function getProductById(id: string): Promise<ProductDTO | null> {
+  return unstable_cache(() => fetchProductById(id), ["product", id], {
+    revalidate: STORE_REVALIDATE_SECONDS,
+    tags: [CACHE_TAGS.products],
+  })();
 }
 
 function toReviewDTO(review: {
@@ -113,9 +167,10 @@ function toReviewDTO(review: {
   };
 }
 
-export async function getReviewsForProduct(productId: string): Promise<ReviewDTO[]> {
+async function fetchReviewsForProduct(productId: string): Promise<ReviewDTO[]> {
   await connectDB();
 
+  const poolSize = await Review.countDocuments();
   let pool: Array<{
     _id?: unknown;
     name: string;
@@ -124,9 +179,9 @@ export async function getReviewsForProduct(productId: string): Promise<ReviewDTO
     body: string;
     postedAt: Date | string;
     index?: number;
-  }> = await Review.find().sort({ index: 1 }).lean();
+  }>;
 
-  if (pool.length < 4) {
+  if (poolSize < 4) {
     const now = Date.now();
     pool = REVIEW_POOL.map((review, index) => ({
       index,
@@ -136,6 +191,15 @@ export async function getReviewsForProduct(productId: string): Promise<ReviewDTO
       body: review.body,
       postedAt: new Date(now - review.daysAgo * 24 * 60 * 60 * 1000),
     }));
+  } else {
+    const indexes = pickReviewIndexes(productId, poolSize);
+    pool = await Review.find({ index: { $in: indexes } }).lean();
+    const byIndex = new Map(pool.map((review) => [review.index, review]));
+    return indexes
+      .map((index) => byIndex.get(index))
+      .filter(Boolean)
+      .map((review) => toReviewDTO(review!))
+      .sort((left, right) => +new Date(right.postedAt) - +new Date(left.postedAt));
   }
 
   return pickReviewIndexes(productId, pool.length)
@@ -143,6 +207,13 @@ export async function getReviewsForProduct(productId: string): Promise<ReviewDTO
     .filter(Boolean)
     .map(toReviewDTO)
     .sort((left, right) => +new Date(right.postedAt) - +new Date(left.postedAt));
+}
+
+export async function getReviewsForProduct(productId: string): Promise<ReviewDTO[]> {
+  return unstable_cache(() => fetchReviewsForProduct(productId), ["reviews", productId], {
+    revalidate: 300,
+    tags: [CACHE_TAGS.reviews],
+  })();
 }
 
 export async function getDashboardStats() {
@@ -169,7 +240,7 @@ const DEFAULT_FRAME_COLORS = [
   { color: "Walnut", prices: [950, 1400, 2000] },
 ] as const;
 
-export async function getFrames(): Promise<FrameDTO[]> {
+async function fetchFrames(): Promise<FrameDTO[]> {
   await connectDB();
 
   let frames = await Frame.find().sort({ sizeLabel: 1, color: 1 }).lean();
@@ -187,4 +258,11 @@ export async function getFrames(): Promise<FrameDTO[]> {
   }
 
   return serialize(frames as unknown as FrameDTO[]);
+}
+
+export async function getFrames(): Promise<FrameDTO[]> {
+  return unstable_cache(fetchFrames, ["frames"], {
+    revalidate: STORE_REVALIDATE_SECONDS,
+    tags: [CACHE_TAGS.frames],
+  })();
 }

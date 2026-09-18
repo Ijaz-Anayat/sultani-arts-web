@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin";
+import { CACHE_TAGS, revalidateStoreTags } from "@/lib/cache-tags";
 import { connectDB } from "@/lib/mongodb";
 import { getCategories } from "@/lib/queries";
 import { slugify } from "@/lib/utils";
@@ -33,6 +34,7 @@ export async function POST(request: Request) {
 
     await connectDB();
     const category = await Category.create({ name, slug });
+    revalidateStoreTags(CACHE_TAGS.categories);
     return NextResponse.json(category, { status: 201 });
   } catch (err) {
     console.error("Create category failed", err);

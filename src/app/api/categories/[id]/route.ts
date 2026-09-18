@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin";
+import { CACHE_TAGS, revalidateStoreTags } from "@/lib/cache-tags";
 import { connectDB } from "@/lib/mongodb";
 import { isValidObjectId, slugify } from "@/lib/utils";
 import { Category } from "@/models/Category";
@@ -34,6 +35,7 @@ export async function PUT(request: Request, context: RouteContext) {
       return NextResponse.json({ error: "Category not found" }, { status: 404 });
     }
 
+    revalidateStoreTags(CACHE_TAGS.categories);
     return NextResponse.json(category);
   } catch (err) {
     console.error("Update category failed", err);
@@ -65,6 +67,7 @@ export async function DELETE(_request: Request, context: RouteContext) {
       return NextResponse.json({ error: "Category not found" }, { status: 404 });
     }
 
+    revalidateStoreTags(CACHE_TAGS.categories);
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("Delete category failed", err);

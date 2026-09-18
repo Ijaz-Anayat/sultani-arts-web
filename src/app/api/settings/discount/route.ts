@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin";
+import { CACHE_TAGS, revalidateStoreTags } from "@/lib/cache-tags";
 import { connectDB } from "@/lib/mongodb";
 import { parseDiscountPercent } from "@/lib/pricing";
 import { getGlobalDiscountPercent } from "@/lib/queries";
@@ -30,6 +31,7 @@ export async function PUT(request: Request) {
       { upsert: true, new: true, setDefaultsOnInsert: true },
     ).lean();
 
+    revalidateStoreTags(CACHE_TAGS.settings);
     return NextResponse.json({
       globalDiscountPercent: settings?.globalDiscountPercent ?? globalDiscountPercent,
     });

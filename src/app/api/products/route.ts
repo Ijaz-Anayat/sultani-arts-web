@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { requireAdmin } from "@/lib/admin";
+import { CACHE_TAGS, revalidateStoreTags } from "@/lib/cache-tags";
 import { connectDB } from "@/lib/mongodb";
 import { getProducts } from "@/lib/queries";
 import { Product } from "@/models/Product";
@@ -76,6 +77,7 @@ export async function POST(request: Request) {
     });
 
     const populated = await product.populate("category");
+    revalidateStoreTags(CACHE_TAGS.products, CACHE_TAGS.categories);
     return NextResponse.json(populated, { status: 201 });
   } catch (err) {
     console.error("Create product failed", err);

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin";
+import { CACHE_TAGS, revalidateStoreTags } from "@/lib/cache-tags";
 import { connectDB } from "@/lib/mongodb";
 import { getProductById } from "@/lib/queries";
 import { isValidObjectId } from "@/lib/utils";
@@ -96,6 +97,7 @@ export async function PUT(request: Request, context: RouteContext) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
+    revalidateStoreTags(CACHE_TAGS.products, CACHE_TAGS.categories);
     return NextResponse.json(product);
   } catch (err) {
     console.error("Update product failed", err);
@@ -118,6 +120,7 @@ export async function DELETE(_request: Request, context: RouteContext) {
     if (!deleted) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
+    revalidateStoreTags(CACHE_TAGS.products, CACHE_TAGS.categories);
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("Delete product failed", err);

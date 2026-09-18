@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin";
+import { CACHE_TAGS, revalidateStoreTags } from "@/lib/cache-tags";
 import { connectDB } from "@/lib/mongodb";
 import { isValidObjectId, serialize } from "@/lib/utils";
 import { getDiscountedPrice } from "@/lib/pricing";
@@ -161,6 +162,8 @@ export async function POST(request: Request) {
       productDoc.inStock = productDoc.sizes.some((entry) => getSizeStock(entry) > 0);
       await productDoc.save();
     }
+
+    revalidateStoreTags(CACHE_TAGS.products);
 
     try {
       await notifyNewOrder({
