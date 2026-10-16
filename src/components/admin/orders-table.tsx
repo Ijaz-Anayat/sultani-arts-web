@@ -56,6 +56,13 @@ export function OrdersTable({ orders }: { orders: OrderDTO[] }) {
                 <span>
                   {item.title} · {item.size}
                   {item.frameColor ? ` · ${item.frameColor} frame` : ""} × {item.quantity}
+                  {item.paintingType ? (
+                    <span className="block pt-1 text-xs text-muted">
+                      {item.paintingType} · “{item.requestedText}”
+                      {item.frameSize ? ` · Frame ${item.frameSize}` : ""}
+                      {item.designNotes ? ` · ${item.designNotes}` : ""}
+                    </span>
+                  ) : null}
                 </span>
                 <span>{formatPrice(item.price * item.quantity)}</span>
               </li>

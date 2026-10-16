@@ -49,7 +49,7 @@ export type CartItem = {
 };
 
 export type OrderItem = {
-  product: string;
+  product?: string;
   title: string;
   image: string;
   size: string;
@@ -57,6 +57,10 @@ export type OrderItem = {
   quantity: number;
   frameColor?: string;
   framePrice?: number;
+  paintingType?: string;
+  requestedText?: string;
+  designNotes?: string;
+  frameSize?: string;
 };
 
 export type OrderDTO = {

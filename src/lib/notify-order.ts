@@ -8,6 +8,10 @@ type OrderNotifyItem = {
   quantity: number;
   frameColor?: string;
   framePrice?: number;
+  paintingType?: string;
+  requestedText?: string;
+  designNotes?: string;
+  frameSize?: string;
 };
 
 type OrderNotifyPayload = {
@@ -61,6 +65,7 @@ function buildOrderEmailHtml(payload: OrderNotifyPayload) {
             <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#8c6a35;">
               ${escapeHtml(item.size)}${item.frameColor ? ` · ${escapeHtml(item.frameColor)} frame` : ""}
             </p>
+            ${item.paintingType ? `<p style="margin:6px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.5;color:#3f3831;">${escapeHtml(item.paintingType)} · “${escapeHtml(item.requestedText ?? "")}"${item.frameSize ? ` · Frame ${escapeHtml(item.frameSize)}` : ""}${item.designNotes ? `<br>${escapeHtml(item.designNotes)}` : ""}</p>` : ""}
           </td>
           <td align="center" style="padding:14px 12px;border-bottom:1px solid #e4d9c8;background:${background};font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#3f3831;white-space:nowrap;">
             ${item.quantity}
@@ -187,7 +192,7 @@ export async function notifyNewOrder(payload: OrderNotifyPayload) {
   const itemsText = payload.items
     .map(
       (item) =>
-        `- ${item.title} (${item.size}${item.frameColor ? `, ${item.frameColor} frame` : ""}) × ${item.quantity} = ${formatPrice(item.price * item.quantity)}`,
+        `- ${item.title} (${item.size}${item.frameColor ? `, ${item.frameColor} frame` : ""}) × ${item.quantity} = ${formatPrice(item.price * item.quantity)}${item.paintingType ? `\n  Type: ${item.paintingType}\n  Calligraphy: ${item.requestedText ?? ""}${item.designNotes ? `\n  Notes: ${item.designNotes}` : ""}` : ""}`,
     )
     .join("\n");
 
