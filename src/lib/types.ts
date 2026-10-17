@@ -61,6 +61,7 @@ export type OrderItem = {
   requestedText?: string;
   designNotes?: string;
   frameSize?: string;
+  referenceImageUrl?: string;
 };
 
 export type OrderDTO = {

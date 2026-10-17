@@ -21,6 +21,7 @@ const orderSchema = new Schema({
       requestedText: String,
       designNotes: String,
       frameSize: String,
+      referenceImageUrl: String,
     },
   ],
   totalAmount: { type: Number, required: true, min: 0 },

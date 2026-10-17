@@ -22,13 +22,13 @@ function configureCloudinary() {
 
 export { cloudinary };
 
-export async function uploadProductImage(buffer: Buffer) {
+export async function uploadProductImage(buffer: Buffer, folder = "sultani-arts/products") {
   configureCloudinary();
 
   return new Promise<string>((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
-        folder: "sultani-arts/products",
+        folder,
         resource_type: "image",
       },
       (error, result) => {

@@ -6,9 +6,10 @@ import { notifyNewOrder } from "@/lib/notify-order";
 import { Order } from "@/models/Order";
 
 type CustomOrderBody = {
-  paintingTypeId?: string;
+  paintingTypeSlug?: string;
   size?: string;
   frameId?: string;
+  referenceImageUrl?: string;
   requestedText?: string;
   designNotes?: string;
   customer?: {
@@ -42,16 +43,31 @@ export async function POST(request: Request) {
     const city = cleanString(body.customer?.city);
     const requestedText = cleanString(body.requestedText);
     const designNotes = cleanString(body.designNotes);
+    const referenceImageUrl = cleanString(body.referenceImageUrl);
 
     if (!name || !phone || !address || !city || !requestedText) {
       return NextResponse.json({ error: "Complete the calligraphy and delivery details" }, { status: 400 });
     }
-    if (name.length > 100 || phone.length > 32 || address.length > 300 || city.length > 100 || requestedText.length > 120 || designNotes.length > 500) {
+    if (name.length > 100 || phone.length > 32 || address.length > 300 || city.length > 100 || requestedText.length > 120 || designNotes.length > 500 || referenceImageUrl.length > 1000) {
       return NextResponse.json({ error: "One or more fields exceed the allowed length" }, { status: 400 });
+    }
+    if (referenceImageUrl) {
+      try {
+        const referenceUrl = new URL(referenceImageUrl);
+        if (
+          referenceUrl.protocol !== "https:" ||
+          referenceUrl.hostname !== "res.cloudinary.com" ||
+          !referenceUrl.pathname.includes("/sultani-arts/custom-order-references/")
+        ) {
+          return NextResponse.json({ error: "Reference image URL is invalid" }, { status: 400 });
+        }
+      } catch {
+        return NextResponse.json({ error: "Reference image URL is invalid" }, { status: 400 });
+      }
     }
 
     const options = await getCustomOrderOptions();
-    const paintingType = options.paintingTypes.find((type) => type.categoryId === body.paintingTypeId);
+    const paintingType = options.paintingTypes.find((type) => type.slug === body.paintingTypeSlug);
     const size = paintingType?.sizes.find((entry) => entry.label === body.size);
     if (!paintingType || !size) {
       return NextResponse.json({ error: "That painting type or size is no longer available" }, { status: 400 });
@@ -78,6 +94,7 @@ export async function POST(request: Request) {
       requestedText,
       designNotes: designNotes || undefined,
       frameSize: frame?.sizeLabel,
+      referenceImageUrl: referenceImageUrl || undefined,
     };
     const customer = { name, phone, address, city };
 

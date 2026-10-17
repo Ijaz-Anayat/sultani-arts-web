@@ -2,7 +2,8 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
-import { Check, Frame as FrameIcon } from "lucide-react";
+import Image from "next/image";
+import { Check, Frame as FrameIcon, ImagePlus, X } from "lucide-react";
 import { framesForSize } from "@/lib/frames";
 import type { CustomOrderOptions } from "@/lib/custom-order-options";
 import { formatPrice } from "@/lib/pricing";
@@ -16,27 +17,31 @@ function dimensionsForSize(label: string) {
 
 export function CustomOrderForm({ options }: Props) {
   const firstType = options.paintingTypes[0];
-  const [typeId, setTypeId] = useState(firstType?.categoryId ?? "");
+  const [typeSlug, setTypeSlug] = useState(firstType?.slug ?? "");
   const [sizeLabel, setSizeLabel] = useState(firstType?.sizes[0]?.label ?? "");
   const [frameEnabled, setFrameEnabled] = useState(false);
   const [frameId, setFrameId] = useState("");
   const [requestedText, setRequestedText] = useState("");
   const [designNotes, setDesignNotes] = useState("");
+  const [referenceImageUrl, setReferenceImageUrl] = useState("");
+  const [referenceImageName, setReferenceImageName] = useState("");
+  const [uploadingReference, setUploadingReference] = useState(false);
+  const [uploadError, setUploadError] = useState("");
   const [customer, setCustomer] = useState({ name: "", phone: "", address: "", city: "" });
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const [orderId, setOrderId] = useState("");
 
-  const selectedType = options.paintingTypes.find((type) => type.categoryId === typeId) ?? firstType;
+  const selectedType = options.paintingTypes.find((type) => type.slug === typeSlug) ?? firstType;
   const selectedSize = selectedType?.sizes.find((size) => size.label === sizeLabel) ?? selectedType?.sizes[0];
   const availableFrames = selectedSize ? framesForSize(options.frames, selectedSize.label) : [];
   const selectedFrame = frameEnabled ? availableFrames.find((frame) => frame._id === frameId) : undefined;
   const total = (selectedSize?.price ?? 0) + (selectedFrame?.price ?? 0);
 
-  function selectType(nextTypeId: string) {
-    const nextType = options.paintingTypes.find((type) => type.categoryId === nextTypeId);
+  function selectType(nextTypeSlug: string) {
+    const nextType = options.paintingTypes.find((type) => type.slug === nextTypeSlug);
     const nextSizeLabel = nextType?.sizes[0]?.label ?? "";
-    setTypeId(nextTypeId);
+    setTypeSlug(nextTypeSlug);
     setSizeLabel(nextSizeLabel);
     setFrameId(
       frameEnabled
@@ -66,11 +71,12 @@ export function CustomOrderForm({ options }: Props) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          paintingTypeId: selectedType?.categoryId,
+          paintingTypeSlug: selectedType?.slug,
           size: selectedSize?.label,
           frameId: selectedFrame?._id,
           requestedText,
           designNotes,
+          referenceImageUrl,
           customer,
         }),
       });
@@ -128,12 +134,12 @@ export function CustomOrderForm({ options }: Props) {
           </label>
           <select
             id="painting-type"
-            value={selectedType.categoryId}
+            value={selectedType.slug}
             onChange={(event) => selectType(event.target.value)}
             className="mt-2 w-full border border-line bg-ivory px-4 py-3 font-serif text-lg outline-none focus:border-gold"
           >
             {options.paintingTypes.map((type) => (
-              <option key={type.categoryId} value={type.categoryId}>{type.name}</option>
+              <option key={type.slug} value={type.slug}>{type.name}</option>
             ))}
           </select>
           <p className="mt-2 font-sans text-xs leading-5 text-muted">
@@ -232,6 +238,82 @@ export function CustomOrderForm({ options }: Props) {
             className="mt-2 w-full resize-y border border-line bg-ivory px-4 py-3 font-sans text-sm leading-6 outline-none focus:border-gold"
           />
         </div>
+
+        <div className="border-t border-line pt-6">
+          <label htmlFor="reference-image" className="font-sans text-[0.65rem] tracking-[0.18em] text-muted uppercase">
+            Reference image <span className="normal-case tracking-normal">(optional)</span>
+          </label>
+          <p className="mt-2 font-sans text-xs leading-5 text-muted">
+            Share an image for visual context. JPG, PNG, or WebP, up to 4 MB.
+          </p>
+          {referenceImageUrl ? (
+            <div className="mt-3 flex items-center gap-3 border border-line bg-ivory p-3">
+              <div className="relative h-16 w-16 shrink-0 overflow-hidden bg-parchment">
+                <Image src={referenceImageUrl} alt="Uploaded reference" fill sizes="64px" className="object-cover" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-sans text-sm">{referenceImageName}</p>
+                <p className="mt-1 font-sans text-xs text-muted">Uploaded</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setReferenceImageUrl("");
+                  setReferenceImageName("");
+                }}
+                aria-label="Remove reference image"
+                className="flex h-9 w-9 shrink-0 items-center justify-center text-muted hover:text-ink"
+              >
+                <X size={16} />
+              </button>
+            </div>
+          ) : (
+            <label htmlFor="reference-image" className="mt-3 flex min-h-12 w-fit cursor-pointer items-center gap-2 border border-line bg-ivory px-4 py-3 font-sans text-xs tracking-[0.12em] uppercase hover:border-gold">
+              <ImagePlus size={16} strokeWidth={1.5} />
+              {uploadingReference ? "Uploading image…" : "Choose reference image"}
+              <input
+                id="reference-image"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="sr-only"
+                disabled={uploadingReference || pending}
+                onChange={async (event) => {
+                  const input = event.currentTarget;
+                  const file = input.files?.[0];
+                  input.value = "";
+                  if (!file) return;
+                  setUploadError("");
+                  if (file.size > 4 * 1024 * 1024) {
+                    setUploadError("Image must be smaller than 4 MB.");
+                    return;
+                  }
+
+                  const data = new FormData();
+                  data.set("file", file);
+                  setUploadingReference(true);
+                  try {
+                    const response = await fetch("/api/custom-orders/reference-image", {
+                      method: "POST",
+                      body: data,
+                    });
+                    const result = (await response.json()) as { url?: string; error?: string };
+                    if (!response.ok || !result.url) {
+                      setUploadError(result.error || "Could not upload this image.");
+                      return;
+                    }
+                    setReferenceImageUrl(result.url);
+                    setReferenceImageName(file.name);
+                  } catch {
+                    setUploadError("A connection error prevented the image upload.");
+                  } finally {
+                    setUploadingReference(false);
+                  }
+                }}
+              />
+            </label>
+          )}
+          {uploadError ? <p role="alert" className="mt-2 font-sans text-sm text-gold-deep">{uploadError}</p> : null}
+        </div>
       </section>
 
       <aside className="order-2 border border-line bg-cream/40 p-5 sm:p-6 lg:sticky lg:top-28 lg:order-none lg:self-start">
@@ -264,7 +346,7 @@ export function CustomOrderForm({ options }: Props) {
           <input required maxLength={300} autoComplete="street-address" placeholder="Delivery address" value={customer.address} onChange={(event) => setCustomer({ ...customer, address: event.target.value })} className="border border-line bg-ivory px-4 py-3 outline-none focus:border-gold sm:col-span-2" />
         </div>
         {error ? <p role="alert" className="mt-4 font-sans text-sm text-gold-deep">{error}</p> : null}
-        <button type="submit" disabled={pending || (frameEnabled && availableFrames.length > 0 && !selectedFrame)} className="mt-5 w-full bg-ink px-5 py-3.5 font-sans text-[0.68rem] tracking-[0.2em] text-ivory uppercase transition-colors hover:bg-gold-deep disabled:cursor-not-allowed disabled:opacity-55 sm:w-auto">
+        <button type="submit" disabled={pending || uploadingReference || (frameEnabled && availableFrames.length > 0 && !selectedFrame)} className="mt-5 w-full bg-ink px-5 py-3.5 font-sans text-[0.68rem] tracking-[0.2em] text-ivory uppercase transition-colors hover:bg-gold-deep disabled:cursor-not-allowed disabled:opacity-55 sm:w-auto">
           {pending ? "Submitting commission…" : `Place custom order · ${formatPrice(total)}`}
         </button>
       </section>

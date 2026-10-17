@@ -61,6 +61,14 @@ export function OrdersTable({ orders }: { orders: OrderDTO[] }) {
                       {item.paintingType} · “{item.requestedText}”
                       {item.frameSize ? ` · Frame ${item.frameSize}` : ""}
                       {item.designNotes ? ` · ${item.designNotes}` : ""}
+                      {item.referenceImageUrl ? (
+                        <>
+                          {" · "}
+                          <a href={item.referenceImageUrl} target="_blank" rel="noreferrer" className="underline underline-offset-2">
+                            Reference image
+                          </a>
+                        </>
+                      ) : null}
                     </span>
                   ) : null}
                 </span>

@@ -7,8 +7,37 @@ const SIZE_ORDER = new Map([
   ["large", 2],
 ]);
 
+const FALLBACK_TYPES = [
+  {
+    name: "Canvas",
+    slug: "canvas",
+    sizes: [
+      { label: "Small (12x16 in)", price: 280 },
+      { label: "Medium (16x20 in)", price: 950 },
+      { label: "Large (20x24 in)", price: 1600 },
+    ],
+  },
+  {
+    name: "Oil Painting",
+    slug: "oil-painting",
+    sizes: [
+      { label: "Small (12x16 in)", price: 300 },
+      { label: "Medium (16x20 in)", price: 1200 },
+      { label: "Large (20x24 in)", price: 2000 },
+    ],
+  },
+  {
+    name: "Calligraphy",
+    slug: "calligraphy",
+    sizes: [
+      { label: "Small (12x16 in)", price: 350 },
+      { label: "Medium (16x20 in)", price: 1100 },
+      { label: "Large (20x24 in)", price: 1800 },
+    ],
+  },
+] as const;
+
 export type CustomPaintingType = {
-  categoryId: string;
   name: string;
   slug: string;
   sizes: Array<{ label: string; price: number }>;
@@ -24,11 +53,14 @@ function productCategoryId(product: ProductDTO) {
 }
 
 export async function getCustomOrderOptions(): Promise<CustomOrderOptions> {
-  const [categories, products, frames] = await Promise.all([
+  const [categoriesResult, productsResult, framesResult] = await Promise.allSettled([
     getCategories(),
     getProducts(),
     getFrames(),
   ]);
+  const categories = categoriesResult.status === "fulfilled" ? categoriesResult.value : [];
+  const products = productsResult.status === "fulfilled" ? productsResult.value : [];
+  const frames = framesResult.status === "fulfilled" ? framesResult.value : [];
 
   const paintingTypes = categories
     .filter((category) => /calligraphy|canvas|oil|painting/i.test(`${category.name} ${category.slug}`))
@@ -44,12 +76,15 @@ export async function getCustomOrderOptions(): Promise<CustomOrderOptions> {
         }
       }
 
+      const fallback = FALLBACK_TYPES.find((type) => type.slug === category.slug);
+      const sizes = prices.size > 0
+        ? [...prices.entries()].map(([label, price]) => ({ label, price }))
+        : fallback?.sizes.map((size) => ({ ...size })) ?? [];
+
       return {
-        categoryId: category._id,
         name: category.name,
         slug: category.slug,
-        sizes: [...prices.entries()]
-          .map(([label, price]) => ({ label, price }))
+        sizes: sizes
           .sort((left, right) => {
             const leftRank = SIZE_ORDER.get(left.label.split(" ")[0].toLowerCase()) ?? 3;
             const rightRank = SIZE_ORDER.get(right.label.split(" ")[0].toLowerCase()) ?? 3;
@@ -59,5 +94,10 @@ export async function getCustomOrderOptions(): Promise<CustomOrderOptions> {
     })
     .filter((type) => type.sizes.length > 0);
 
-  return { paintingTypes, frames };
+  return {
+    paintingTypes: paintingTypes.length > 0
+      ? paintingTypes
+      : FALLBACK_TYPES.map((type) => ({ ...type, sizes: type.sizes.map((size) => ({ ...size })) })),
+    frames,
+  };
 }
