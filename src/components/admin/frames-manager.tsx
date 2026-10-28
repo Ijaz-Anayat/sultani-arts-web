@@ -6,15 +6,19 @@ import { DEFAULT_SIZES } from "@/lib/constants";
 import { formatPrice } from "@/lib/pricing";
 import type { FrameDTO } from "@/lib/types";
 
+const CUSTOM_SIZE_VALUE = "__custom_size__";
+
 export function FramesManager({ frames }: { frames: FrameDTO[] }) {
   const router = useRouter();
   const [sizeLabel, setSizeLabel] = useState<string>(DEFAULT_SIZES[0].label);
+  const [customSizeLabel, setCustomSizeLabel] = useState("");
   const [color, setColor] = useState("");
   const [price, setPrice] = useState("");
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editSize, setEditSize] = useState("");
+  const [editCustomSizeLabel, setEditCustomSizeLabel] = useState("");
   const [editColor, setEditColor] = useState("");
   const [editPrice, setEditPrice] = useState("");
   const [editPending, setEditPending] = useState(false);
@@ -22,12 +26,18 @@ export function FramesManager({ frames }: { frames: FrameDTO[] }) {
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
     setError("");
+    const savedSizeLabel =
+      sizeLabel === CUSTOM_SIZE_VALUE ? customSizeLabel.trim() : sizeLabel;
+    if (!savedSizeLabel) {
+      setError("Enter a label for the custom frame size.");
+      return;
+    }
     setPending(true);
     const response = await fetch("/api/frames", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        sizeLabel,
+        sizeLabel: savedSizeLabel,
         color,
         price: Number(price),
       }),
@@ -38,6 +48,8 @@ export function FramesManager({ frames }: { frames: FrameDTO[] }) {
       setError(body.error || "Could not add frame");
       return;
     }
+    setSizeLabel(DEFAULT_SIZES[0].label);
+    setCustomSizeLabel("");
     setColor("");
     setPrice("");
     router.refresh();
@@ -45,7 +57,9 @@ export function FramesManager({ frames }: { frames: FrameDTO[] }) {
 
   function startEdit(frame: FrameDTO) {
     setEditingId(frame._id);
-    setEditSize(frame.sizeLabel);
+    const isPresetSize = DEFAULT_SIZES.some((size) => size.label === frame.sizeLabel);
+    setEditSize(isPresetSize ? frame.sizeLabel : CUSTOM_SIZE_VALUE);
+    setEditCustomSizeLabel(isPresetSize ? "" : frame.sizeLabel);
     setEditColor(frame.color);
     setEditPrice(String(frame.price));
     setError("");
@@ -57,13 +71,19 @@ export function FramesManager({ frames }: { frames: FrameDTO[] }) {
   }
 
   async function saveEdit(id: string) {
+    const savedSizeLabel =
+      editSize === CUSTOM_SIZE_VALUE ? editCustomSizeLabel.trim() : editSize;
+    if (!savedSizeLabel) {
+      setError("Enter a label for the custom frame size.");
+      return;
+    }
     setEditPending(true);
     setError("");
     const response = await fetch(`/api/frames/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        sizeLabel: editSize,
+        sizeLabel: savedSizeLabel,
         color: editColor,
         price: Number(editPrice),
       }),
@@ -109,20 +129,40 @@ export function FramesManager({ frames }: { frames: FrameDTO[] }) {
                 <tr key={frame._id} className="border-t border-line">
                   <td className="px-4 py-3">
                     {isEditing ? (
-                      <select
-                        value={editSize}
-                        onChange={(event) => setEditSize(event.target.value)}
-                        className="w-full border border-line bg-ivory px-3 py-2 outline-none focus:border-gold"
-                      >
-                        {!DEFAULT_SIZES.some((size) => size.label === editSize) ? (
-                          <option value={editSize}>{editSize}</option>
+                      <>
+                        <select
+                          value={
+                            editSize === CUSTOM_SIZE_VALUE ||
+                            !DEFAULT_SIZES.some((size) => size.label === editSize)
+                              ? CUSTOM_SIZE_VALUE
+                              : editSize
+                          }
+                          onChange={(event) => {
+                            setEditSize(event.target.value);
+                            if (event.target.value !== CUSTOM_SIZE_VALUE) {
+                              setEditCustomSizeLabel("");
+                            }
+                          }}
+                          className="w-full border border-line bg-ivory px-3 py-2 outline-none focus:border-gold"
+                        >
+                          {DEFAULT_SIZES.map((size) => (
+                            <option key={size.label} value={size.label}>
+                              {size.label}
+                            </option>
+                          ))}
+                          <option value={CUSTOM_SIZE_VALUE}>Custom size</option>
+                        </select>
+                        {editSize === CUSTOM_SIZE_VALUE ? (
+                          <input
+                            required
+                            value={editCustomSizeLabel}
+                            onChange={(event) => setEditCustomSizeLabel(event.target.value)}
+                            placeholder="e.g. 18x24 in"
+                            aria-label="Custom frame size"
+                            className="mt-2 w-full border border-line bg-ivory px-3 py-2 outline-none focus:border-gold"
+                          />
                         ) : null}
-                        {DEFAULT_SIZES.map((size) => (
-                          <option key={size.label} value={size.label}>
-                            {size.label}
-                          </option>
-                        ))}
-                      </select>
+                      </>
                     ) : (
                       <span className="font-serif">{frame.sizeLabel}</span>
                     )}
@@ -204,7 +244,12 @@ export function FramesManager({ frames }: { frames: FrameDTO[] }) {
           </span>
           <select
             value={sizeLabel}
-            onChange={(event) => setSizeLabel(event.target.value)}
+            onChange={(event) => {
+              setSizeLabel(event.target.value);
+              if (event.target.value !== CUSTOM_SIZE_VALUE) {
+                setCustomSizeLabel("");
+              }
+            }}
             className="mt-2 w-full border border-line bg-ivory px-4 py-3 outline-none focus:border-gold"
           >
             {DEFAULT_SIZES.map((size) => (
@@ -212,8 +257,23 @@ export function FramesManager({ frames }: { frames: FrameDTO[] }) {
                 {size.label}
               </option>
             ))}
+            <option value={CUSTOM_SIZE_VALUE}>Custom size</option>
           </select>
         </label>
+        {sizeLabel === CUSTOM_SIZE_VALUE ? (
+          <label className="mt-4 block">
+            <span className="font-sans text-[0.65rem] tracking-[0.2em] text-muted uppercase">
+              Custom size
+            </span>
+            <input
+              required
+              value={customSizeLabel}
+              onChange={(event) => setCustomSizeLabel(event.target.value)}
+              placeholder="e.g. 18x24 in"
+              className="mt-2 w-full border border-line bg-ivory px-4 py-3 outline-none focus:border-gold"
+            />
+          </label>
+        ) : null}
         <label className="mt-4 block">
           <span className="font-sans text-[0.65rem] tracking-[0.2em] text-muted uppercase">
             Color

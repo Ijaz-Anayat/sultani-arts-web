@@ -45,11 +45,10 @@ export async function FeaturedProducts({ limit = 8, compact = false }: Props) {
               compact ? "lg:grid-cols-4" : "lg:grid-cols-4"
             }`}
           >
-            {products.map((product, index) => (
+            {products.map((product) => (
               <ProductCard
                 key={product._id}
                 product={product}
-                revealDelay={index * 70}
                 compact={compact}
               />
             ))}

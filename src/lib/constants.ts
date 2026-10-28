@@ -19,6 +19,8 @@ export const ORDER_STATUSES = [
   "cancelled",
 ] as const;
 
+export const CASH_ON_DELIVERY_FEE = 200;
+
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
 
 export const CART_STORAGE_KEY = "sultani-arts-cart";

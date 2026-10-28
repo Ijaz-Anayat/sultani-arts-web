@@ -4,19 +4,23 @@ import { FormEvent, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useStore } from "@/components/store-provider";
+import { CASH_ON_DELIVERY_FEE } from "@/lib/constants";
 import { formatPrice } from "@/lib/pricing";
 
 export function CheckoutForm() {
   const { cart, clearCart } = useStore();
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
+  const [cashOnDelivery, setCashOnDelivery] = useState(false);
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
 
-  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const total = subtotal + (cashOnDelivery ? CASH_ON_DELIVERY_FEE : 0);
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -27,13 +31,14 @@ export function CheckoutForm() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        customer: { name, phone, address, city },
+        customer: { name, email, phone, address, city },
         items: cart.map((item) => ({
           productId: item.productId,
           size: item.size,
           quantity: item.quantity,
           frameId: item.frameId,
         })),
+        cashOnDelivery,
       }),
     });
 
@@ -103,6 +108,16 @@ export function CheckoutForm() {
         />
         <input
           required
+          type="email"
+          autoComplete="email"
+          placeholder="Email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          className="w-full border border-line bg-ivory px-4 py-3 outline-none focus:border-gold"
+        />
+        <input
+          required
+          autoComplete="tel"
           placeholder="Phone"
           value={phone}
           onChange={(event) => setPhone(event.target.value)}
@@ -122,6 +137,20 @@ export function CheckoutForm() {
           onChange={(event) => setCity(event.target.value)}
           className="w-full border border-line bg-ivory px-4 py-3 outline-none focus:border-gold"
         />
+        <label className="flex cursor-pointer items-start gap-3 border border-line bg-cream/40 p-4">
+          <input
+            type="checkbox"
+            checked={cashOnDelivery}
+            onChange={(event) => setCashOnDelivery(event.target.checked)}
+            className="mt-1 h-4 w-4 accent-ink"
+          />
+          <span>
+            <span className="block font-sans text-sm text-ink">Cash on delivery</span>
+            <span className="mt-1 block font-sans text-xs text-muted">
+              Add {formatPrice(CASH_ON_DELIVERY_FEE)} cash-on-delivery fee
+            </span>
+          </span>
+        </label>
         {error ? <p className="text-sm text-gold-deep">{error}</p> : null}
         <button
           type="submit"
@@ -158,9 +187,21 @@ export function CheckoutForm() {
             </li>
           ))}
         </ul>
-        <div className="mt-6 flex justify-between border-t border-line pt-4 font-sans text-sm uppercase tracking-wide">
-          <span>Total</span>
-          <span>{formatPrice(total)}</span>
+        <div className="mt-6 space-y-3 border-t border-line pt-4 font-sans text-sm">
+          <div className="flex justify-between">
+            <span className="text-muted">Subtotal</span>
+            <span>{formatPrice(subtotal)}</span>
+          </div>
+          {cashOnDelivery ? (
+            <div className="flex justify-between">
+              <span className="text-muted">Cash on delivery</span>
+              <span>{formatPrice(CASH_ON_DELIVERY_FEE)}</span>
+            </div>
+          ) : null}
+          <div className="flex justify-between border-t border-line pt-3 font-sans uppercase tracking-wide">
+            <span>Total</span>
+            <span>{formatPrice(total)}</span>
+          </div>
         </div>
       </aside>
     </div>

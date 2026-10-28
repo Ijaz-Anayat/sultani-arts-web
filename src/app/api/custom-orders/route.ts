@@ -113,7 +113,10 @@ export async function POST(request: Request) {
         totalAmount,
       });
     } catch (notifyError) {
-      console.error("Custom order email failed", notifyError);
+      console.error("Custom order email failed", {
+        orderId: String(order._id),
+        error: notifyError,
+      });
     }
 
     return NextResponse.json({ _id: String(order._id) }, { status: 201 });

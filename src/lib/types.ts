@@ -68,12 +68,15 @@ export type OrderDTO = {
   _id: string;
   customer: {
     name: string;
+    email?: string;
     phone: string;
     address: string;
     city: string;
   };
   items: OrderItem[];
   totalAmount: number;
+  cashOnDelivery?: boolean;
+  cashOnDeliveryFee?: number;
   status: OrderStatus;
   createdAt: string;
 };

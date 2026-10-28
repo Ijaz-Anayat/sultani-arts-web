@@ -19,12 +19,15 @@ type OrderNotifyPayload = {
   orderId: string;
   customer: {
     name: string;
+    email?: string;
     phone: string;
     address: string;
     city: string;
   };
   items: OrderNotifyItem[];
   totalAmount: number;
+  cashOnDelivery?: boolean;
+  cashOnDeliveryFee?: number;
 };
 
 function escapeHtml(value: string) {
@@ -120,10 +123,13 @@ function buildOrderEmailHtml(payload: OrderNotifyPayload) {
                 </p>
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                   ${detailRow("Name", escapeHtml(payload.customer.name))}
+                  ${payload.customer.email ? detailRow("Email", escapeHtml(payload.customer.email)) : ""}
                   ${detailRow("Phone", escapeHtml(payload.customer.phone))}
                   ${detailRow("City", escapeHtml(payload.customer.city))}
                   ${detailRow("Address", escapeHtml(payload.customer.address))}
                   ${detailRow("Order", escapeHtml(payload.orderId))}
+                  ${payload.cashOnDelivery ? detailRow("Payment", "Cash on delivery") : ""}
+                  ${payload.cashOnDelivery ? detailRow("Cash-on-delivery fee", escapeHtml(formatPrice(payload.cashOnDeliveryFee ?? 0))) : ""}
                 </table>
               </td>
             </tr>
@@ -186,8 +192,7 @@ export async function notifyNewOrder(payload: OrderNotifyPayload) {
   const from = cleanEnv(process.env.RESEND_FROM) || "Sultani Arts <onboarding@resend.dev>";
 
   if (!apiKey || !to) {
-    console.warn("Order email skipped: RESEND_API_KEY or ORDER_NOTIFY_EMAIL is missing");
-    return;
+    throw new Error("Order email not sent: RESEND_API_KEY or ORDER_NOTIFY_EMAIL is missing");
   }
 
   const itemsText = payload.items
@@ -198,7 +203,7 @@ export async function notifyNewOrder(payload: OrderNotifyPayload) {
     .join("\n");
 
   const resend = new Resend(apiKey);
-  const { error } = await resend.emails.send({
+  const { data, error } = await resend.emails.send({
     from,
     to,
     subject: `New order · ${formatPrice(payload.totalAmount)} · ${payload.customer.name}`,
@@ -207,9 +212,14 @@ export async function notifyNewOrder(payload: OrderNotifyPayload) {
       "",
       `Order: ${payload.orderId}`,
       `Name: ${payload.customer.name}`,
+      ...(payload.customer.email ? [`Email: ${payload.customer.email}`] : []),
       `Phone: ${payload.customer.phone}`,
       `City: ${payload.customer.city}`,
       `Address: ${payload.customer.address}`,
+      `Payment: ${payload.cashOnDelivery ? "Cash on delivery" : "Not specified"}`,
+      ...(payload.cashOnDelivery
+        ? [`Cash-on-delivery fee: ${formatPrice(payload.cashOnDeliveryFee ?? 0)}`]
+        : []),
       "",
       "Items:",
       itemsText,
@@ -222,4 +232,9 @@ export async function notifyNewOrder(payload: OrderNotifyPayload) {
   if (error) {
     throw new Error(error.message);
   }
+
+  console.info("Order email accepted by Resend", {
+    orderId: payload.orderId,
+    emailId: data?.id,
+  });
 }

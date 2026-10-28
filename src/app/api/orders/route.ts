@@ -11,6 +11,7 @@ import { getSizeStock } from "@/lib/product-sizes";
 import { Order } from "@/models/Order";
 import { Frame } from "@/models/Frame";
 import { Product } from "@/models/Product";
+import { CASH_ON_DELIVERY_FEE } from "@/lib/constants";
 
 export async function GET() {
   const { error } = await requireAdmin();
@@ -31,6 +32,7 @@ export async function POST(request: Request) {
     const body = (await request.json()) as {
       customer?: {
         name?: string;
+        email?: string;
         phone?: string;
         address?: string;
         city?: string;
@@ -41,18 +43,25 @@ export async function POST(request: Request) {
         quantity?: number;
         frameId?: string;
       }>;
+      cashOnDelivery?: boolean;
     };
+    const cashOnDelivery = body.cashOnDelivery === true;
+    const cashOnDeliveryFee = cashOnDelivery ? CASH_ON_DELIVERY_FEE : 0;
 
     const name = body.customer?.name?.trim();
+    const email = body.customer?.email?.trim().toLowerCase();
     const phone = body.customer?.phone?.trim();
     const address = body.customer?.address?.trim();
     const city = body.customer?.city?.trim();
 
-    if (!name || !phone || !address || !city) {
+    if (!name || !email || !phone || !address || !city) {
       return NextResponse.json(
-        { error: "Name, phone, address, and city are required" },
+        { error: "Name, email, phone, address, and city are required" },
         { status: 400 },
       );
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json({ error: "Enter a valid email address" }, { status: 400 });
     }
 
     if (!Array.isArray(body.items) || body.items.length === 0) {
@@ -142,12 +151,16 @@ export async function POST(request: Request) {
       });
     }
 
-    const totalAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const totalAmount =
+      items.reduce((sum, item) => sum + item.price * item.quantity, 0) +
+      cashOnDeliveryFee;
 
     const order = await Order.create({
-      customer: { name, phone, address, city },
+      customer: { name, email, phone, address, city },
       items,
       totalAmount,
+      cashOnDelivery,
+      cashOnDeliveryFee,
       status: "pending",
     });
 
@@ -168,12 +181,17 @@ export async function POST(request: Request) {
     try {
       await notifyNewOrder({
         orderId: String(order._id),
-        customer: { name, phone, address, city },
+        customer: { name, email, phone, address, city },
         items,
         totalAmount,
+        cashOnDelivery,
+        cashOnDeliveryFee,
       });
     } catch (notifyError) {
-      console.error("Order email failed", notifyError);
+      console.error("Order email failed", {
+        orderId: String(order._id),
+        error: notifyError,
+      });
     }
 
     return NextResponse.json(order, { status: 201 });

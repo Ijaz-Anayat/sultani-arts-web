@@ -43,7 +43,12 @@ export default async function AdminDashboardPage() {
               <tbody>
                 {stats.recentOrders.map((order) => (
                   <tr key={order._id} className="border-t border-line">
-                    <td className="px-4 py-3 font-serif">{order.customer.name}</td>
+                    <td className="px-4 py-3">
+                      <p className="font-serif">{order.customer.name}</p>
+                      <p className="mt-1 text-xs text-muted">
+                        {order.customer.email || "Email not recorded"}
+                      </p>
+                    </td>
                     <td className="px-4 py-3">{formatPrice(order.totalAmount)}</td>
                     <td className="px-4 py-3 capitalize">{order.status}</td>
                   </tr>

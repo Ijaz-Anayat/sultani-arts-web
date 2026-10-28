@@ -65,18 +65,17 @@ function ProductCardTitle({
 
 export function ProductCard({
   product,
-  revealDelay = 0,
   compact = false,
 }: {
   product: ProductDTO;
-  revealDelay?: number;
   compact?: boolean;
 }) {
   const { addToCart, toggleWishlist, isWishlisted, setCartOpen, globalDiscountPercent } =
     useStore();
   const saved = isWishlisted(product._id);
   const image = resolveProductImage(product.images[0]);
-  const [imageSrc, setImageSrc] = useState(image);
+  const [failedImage, setFailedImage] = useState<string | null>(null);
+  const imageSrc = failedImage === image ? SITE_IMAGES.productFallback : image;
   const categoryName =
     typeof product.category === "object" ? product.category.name : "";
   const defaultSizeIndex = findFirstAvailableSizeIndex(product.sizes);
@@ -87,10 +86,6 @@ export function ProductCard({
     : 0;
   const canAdd =
     product.inStock && product.sizes.some((entry) => isSizeInStock(entry)) && defaultSize;
-
-  useEffect(() => {
-    setImageSrc(image);
-  }, [image]);
 
   function handleAdd() {
     if (!defaultSize || !canAdd) return;
@@ -111,7 +106,7 @@ export function ProductCard({
   }
 
   return (
-    <RevealOnScroll delay={revealDelay} className="h-full">
+    <RevealOnScroll className="product-card-reveal h-full">
       <article className="group flex h-full min-w-0 flex-col">
       <div className={`relative overflow-hidden bg-parchment ${compact ? "mb-2 sm:mb-3" : "mb-3 sm:mb-4"}`}>
         <Link
@@ -122,7 +117,7 @@ export function ProductCard({
             src={imageSrc}
             alt={product.title}
             fill
-            onError={() => setImageSrc(SITE_IMAGES.productFallback)}
+            onError={() => setFailedImage(image)}
             className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.06]"
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
           />
