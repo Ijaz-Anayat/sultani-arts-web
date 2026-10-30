@@ -15,7 +15,13 @@ import { PageView } from "@/models/PageView";
 import { DEFAULT_SIZES } from "@/lib/constants";
 import { REVIEW_POOL } from "@/lib/review-pool-data";
 import { pickReviewIndexes, type ReviewDTO } from "@/lib/reviews";
-import type { CategoryDTO, FrameDTO, ProductDTO, OrderDTO } from "@/lib/types";
+import type {
+  CashOnDeliveryFees,
+  CategoryDTO,
+  FrameDTO,
+  ProductDTO,
+  OrderDTO,
+} from "@/lib/types";
 
 const STORE_REVALIDATE_SECONDS = 60;
 
@@ -37,6 +43,36 @@ export async function getGlobalDiscountPercent(): Promise<number> {
     revalidate: STORE_REVALIDATE_SECONDS,
     tags: [CACHE_TAGS.settings],
   })();
+}
+
+export async function getCashOnDeliveryFees(): Promise<CashOnDeliveryFees> {
+  await connectDB();
+  const settings = await Settings.findOne({ key: "store" }).lean();
+  return Object.fromEntries(
+    (settings?.cashOnDeliveryFees ?? []).map(({ sizeLabel, amount }) => [sizeLabel, amount]),
+  );
+}
+
+export async function getCashOnDeliverySettings(): Promise<{
+  fees: CashOnDeliveryFees;
+  sizeLabels: string[];
+}> {
+  await connectDB();
+  const [settings, productSizeLabels] = await Promise.all([
+    Settings.findOne({ key: "store" }).lean(),
+    Product.distinct("sizes.label"),
+  ]);
+  const fees = Object.fromEntries(
+    (settings?.cashOnDeliveryFees ?? []).map(({ sizeLabel, amount }) => [sizeLabel, amount]),
+  );
+  const sizeLabels = [
+    ...new Set([
+      ...productSizeLabels.filter((label): label is string => typeof label === "string" && label.length > 0),
+      ...Object.keys(fees),
+    ]),
+  ].sort((left, right) => left.localeCompare(right));
+
+  return { fees, sizeLabels };
 }
 
 async function fetchCategories(): Promise<CategoryDTO[]> {

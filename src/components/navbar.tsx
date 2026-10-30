@@ -40,7 +40,7 @@ export function Navbar() {
     <>
       <div className="hidden border-b border-line bg-ink text-ivory md:block">
         <p className="mx-auto max-w-[1400px] px-4 py-2 text-center font-sans text-[0.62rem] tracking-[0.18em] uppercase sm:px-6 sm:text-[0.68rem] sm:tracking-[0.28em]">
-          Complimentary framing consult · Worldwide insured shipping
+          Your Favourite Art Pieces · Now Up to 60% OFF
         </p>
       </div>
 

@@ -1,5 +1,7 @@
 import { connectDB } from "@/lib/mongodb";
 import { PageView } from "@/models/PageView";
+import { Product } from "@/models/Product";
+import { resolveProductImage } from "@/lib/site-images";
 
 export type AnalyticsDateRange = {
   from: string;
@@ -10,7 +12,11 @@ export type PageAnalyticsReport = AnalyticsDateRange & {
   pageViews: number;
   uniqueVisitors: number;
   daily: Array<{ date: string; pageViews: number; visitors: number }>;
-  pages: Array<{ path: string; pageViews: number }>;
+  pages: Array<{
+    path: string;
+    pageViews: number;
+    product?: { title: string; image: string };
+  }>;
 };
 
 type AnalyticsAggregation = {
@@ -135,6 +141,26 @@ export async function getPageAnalyticsReport(
     },
   ]);
 
+  const pageRows = result?.pages ?? [];
+  const productIds = pageRows.flatMap((page) => {
+    const match = /^\/product\/([a-f\d]{24})$/i.exec(page._id);
+    return match ? [match[1]] : [];
+  });
+  const products = productIds.length
+    ? await Product.find({ _id: { $in: productIds } })
+        .select("_id title images")
+        .lean()
+    : [];
+  const productsById = new Map(
+    products.map((product) => [
+      String(product._id),
+      {
+        title: product.title,
+        image: resolveProductImage(product.images[0]),
+      },
+    ]),
+  );
+
   return {
     from: bounds.from,
     to: bounds.to,
@@ -145,9 +171,14 @@ export async function getPageAnalyticsReport(
       pageViews: day.pageViews,
       visitors: day.visitors,
     })),
-    pages: (result?.pages ?? []).map((page) => ({
-      path: page._id,
-      pageViews: page.pageViews,
-    })),
+    pages: pageRows.map((page) => {
+      const match = /^\/product\/([a-f\d]{24})$/i.exec(page._id);
+      const product = match ? productsById.get(match[1]) : undefined;
+      return {
+        path: page._id,
+        pageViews: page.pageViews,
+        ...(product ? { product } : {}),
+      };
+    }),
   };
 }

@@ -3,15 +3,17 @@ import { requireAdmin } from "@/lib/admin";
 import { CACHE_TAGS, revalidateStoreTags } from "@/lib/cache-tags";
 import { connectDB } from "@/lib/mongodb";
 import { isValidObjectId, serialize } from "@/lib/utils";
-import { getDiscountedPrice } from "@/lib/pricing";
-import { getGlobalDiscountPercent } from "@/lib/queries";
+import {
+  getCashOnDeliveryFeeForOrder,
+  getDiscountedPrice,
+} from "@/lib/pricing";
+import { getCashOnDeliveryFees, getGlobalDiscountPercent } from "@/lib/queries";
 import { frameMatchesSize } from "@/lib/frames";
 import { notifyNewOrder } from "@/lib/notify-order";
 import { getSizeStock } from "@/lib/product-sizes";
 import { Order } from "@/models/Order";
 import { Frame } from "@/models/Frame";
 import { Product } from "@/models/Product";
-import { CASH_ON_DELIVERY_FEE } from "@/lib/constants";
 
 export async function GET() {
   const { error } = await requireAdmin();
@@ -46,7 +48,6 @@ export async function POST(request: Request) {
       cashOnDelivery?: boolean;
     };
     const cashOnDelivery = body.cashOnDelivery === true;
-    const cashOnDeliveryFee = cashOnDelivery ? CASH_ON_DELIVERY_FEE : 0;
 
     const name = body.customer?.name?.trim();
     const email = body.customer?.email?.trim().toLowerCase();
@@ -69,7 +70,10 @@ export async function POST(request: Request) {
     }
 
     await connectDB();
-    const globalDiscountPercent = await getGlobalDiscountPercent();
+    const [globalDiscountPercent, cashOnDeliveryFees] = await Promise.all([
+      getGlobalDiscountPercent(),
+      getCashOnDeliveryFees(),
+    ]);
 
     const items = [];
     const stockUpdates: Array<{ productId: string; sizeLabel: string; quantity: number }> = [];
@@ -151,6 +155,12 @@ export async function POST(request: Request) {
       });
     }
 
+    const cashOnDeliveryFee = cashOnDelivery
+      ? getCashOnDeliveryFeeForOrder(
+          items.map((item) => item.size),
+          cashOnDeliveryFees,
+        )
+      : 0;
     const totalAmount =
       items.reduce((sum, item) => sum + item.price * item.quantity, 0) +
       cashOnDeliveryFee;

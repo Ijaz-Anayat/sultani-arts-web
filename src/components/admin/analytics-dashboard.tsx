@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
 import { useMemo, useState, type FormEvent } from "react";
 import type { PageAnalyticsReport } from "@/lib/page-analytics";
 
@@ -167,7 +169,34 @@ export function AnalyticsDashboard({
               <tbody>
                 {report.pages.map((page) => (
                   <tr key={page.path} className="border-t border-line font-sans text-sm">
-                    <td className="max-w-[70vw] break-all px-4 py-3">{page.path}</td>
+                    <td className="max-w-[70vw] px-4 py-3">
+                      {page.product ? (
+                        <Link
+                          href={page.path}
+                          className="flex items-center gap-3 text-ink transition-colors hover:text-gold-deep"
+                        >
+                          <span className="relative h-14 w-12 shrink-0 overflow-hidden bg-parchment">
+                            <Image
+                              src={page.product.image}
+                              alt=""
+                              fill
+                              sizes="48px"
+                              className="object-cover"
+                            />
+                          </span>
+                          <span className="min-w-0">
+                            <span className="block break-words font-medium">
+                              {page.product.title}
+                            </span>
+                            <span className="mt-1 block break-all text-xs text-muted">
+                              {page.path}
+                            </span>
+                          </span>
+                        </Link>
+                      ) : (
+                        <span className="break-all">{page.path}</span>
+                      )}
+                    </td>
                     <td className="px-4 py-3">{formatCount(page.pageViews)}</td>
                   </tr>
                 ))}

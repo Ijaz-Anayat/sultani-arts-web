@@ -4,10 +4,10 @@ import { FormEvent, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useStore } from "@/components/store-provider";
-import { CASH_ON_DELIVERY_FEE } from "@/lib/constants";
-import { formatPrice } from "@/lib/pricing";
+import { getCashOnDeliveryFeeForOrder, formatPrice } from "@/lib/pricing";
+import type { CashOnDeliveryFees } from "@/lib/types";
 
-export function CheckoutForm() {
+export function CheckoutForm({ cashOnDeliveryFees }: { cashOnDeliveryFees: CashOnDeliveryFees }) {
   const { cart, clearCart } = useStore();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -20,7 +20,11 @@ export function CheckoutForm() {
   const [orderId, setOrderId] = useState<string | null>(null);
 
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const total = subtotal + (cashOnDelivery ? CASH_ON_DELIVERY_FEE : 0);
+  const codFee = getCashOnDeliveryFeeForOrder(
+    cart.map((item) => item.size),
+    cashOnDeliveryFees,
+  );
+  const total = subtotal + (cashOnDelivery ? codFee : 0);
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -147,7 +151,7 @@ export function CheckoutForm() {
           <span>
             <span className="block font-sans text-sm text-ink">Cash on delivery</span>
             <span className="mt-1 block font-sans text-xs text-muted">
-              Add {formatPrice(CASH_ON_DELIVERY_FEE)} cash-on-delivery fee
+              Add {formatPrice(codFee)} cash-on-delivery fee
             </span>
           </span>
         </label>
@@ -199,7 +203,7 @@ export function CheckoutForm() {
           {cashOnDelivery ? (
             <div className="flex justify-between">
               <span className="text-muted">Cash on delivery</span>
-              <span>{formatPrice(CASH_ON_DELIVERY_FEE)}</span>
+              <span>{formatPrice(codFee)}</span>
             </div>
           ) : null}
           <div className="flex justify-between border-t border-line pt-3 font-sans uppercase tracking-wide">

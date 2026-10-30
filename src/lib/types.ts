@@ -6,6 +6,8 @@ export type ProductSize = {
   stock: number;
 };
 
+export type CashOnDeliveryFees = Record<string, number>;
+
 export type CategoryDTO = {
   _id: string;
   name: string;

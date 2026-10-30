@@ -1,3 +1,6 @@
+import { CASH_ON_DELIVERY_FEE } from "@/lib/constants";
+import type { CashOnDeliveryFees } from "@/lib/types";
+
 export function clampDiscount(value: number) {
   return Math.min(100, Math.max(0, value));
 }
@@ -38,4 +41,18 @@ export function startingPrice(
 
 export function hasActiveDiscount(globalPercent: number, productPercent = 0) {
   return getEffectiveDiscountPercent(globalPercent, productPercent) > 0;
+}
+
+export function getCashOnDeliveryFeeForSize(
+  sizeLabel: string,
+  fees: CashOnDeliveryFees,
+) {
+  return fees[sizeLabel] ?? CASH_ON_DELIVERY_FEE;
+}
+
+export function getCashOnDeliveryFeeForOrder(
+  sizeLabels: string[],
+  fees: CashOnDeliveryFees,
+) {
+  return Math.max(0, ...sizeLabels.map((label) => getCashOnDeliveryFeeForSize(label, fees)));
 }
