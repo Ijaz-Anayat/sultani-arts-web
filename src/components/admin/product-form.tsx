@@ -25,6 +25,7 @@ export function ProductForm({ categories, product }: Props) {
       : DEFAULT_SIZES.map((size) => ({ ...size })),
   );
   const [inStock, setInStock] = useState(product?.inStock ?? true);
+  const [priority, setPriority] = useState(product?.priority ?? 20);
   const [discountPercent, setDiscountPercent] = useState(product?.discountPercent ?? 0);
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
@@ -63,6 +64,7 @@ export function ProductForm({ categories, product }: Props) {
       images,
       category,
       sizes,
+      priority,
       inStock,
       discountPercent,
     };
@@ -247,6 +249,28 @@ export function ProductForm({ categories, product }: Props) {
           ))}
         </div>
       </div>
+
+      <label className="block">
+        <span className="font-sans text-[0.65rem] tracking-[0.2em] text-muted uppercase">
+          Homepage priority
+        </span>
+        <select
+          required
+          value={priority}
+          onChange={(event) => setPriority(Number(event.target.value))}
+          className="mt-2 w-full border border-line bg-ivory px-4 py-3 outline-none focus:border-gold"
+        >
+          {Array.from({ length: 20 }, (_, index) => index + 1).map((value) => (
+            <option key={value} value={value}>
+              {value}
+            </option>
+          ))}
+        </select>
+        <p className="mt-2 font-sans text-sm text-muted">
+          Lower numbers appear first on the homepage. Products with the same
+          priority are ordered by newest first.
+        </p>
+      </label>
 
       <label className="block">
         <span className="font-sans text-[0.65rem] tracking-[0.2em] text-muted uppercase">

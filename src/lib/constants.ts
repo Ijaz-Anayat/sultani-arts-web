@@ -29,8 +29,8 @@ export const WISHLIST_STORAGE_KEY = "sultani-arts-wishlist";
 export const SITE_CONTACT = {
   email: "team.sultaniarts@gmail.com",
   phone: "+923124988852",
-  phoneDisplay: "0312 4988852",
-  whatsappUrl: "https://wa.me/923124988852",
+  phoneDisplay: "0301 9067930",
+  whatsappUrl: "https://wa.me/923019067930",
   location: "Township, Lahore",
   locationLine: "Township, Lahore, Pakistan",
   instagram: "https://www.instagram.com/sultaniarts010?igsh=ejJibGhtam1hb3Bl",

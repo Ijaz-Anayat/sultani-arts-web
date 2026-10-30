@@ -1,3 +1,4 @@
+import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin";
 import { CACHE_TAGS, revalidateStoreTags } from "@/lib/cache-tags";
@@ -45,6 +46,7 @@ export async function PUT(request: Request, context: RouteContext) {
       images?: string[];
       category?: string;
       sizes?: unknown;
+      priority?: unknown;
       inStock?: boolean;
       discountPercent?: unknown;
     };
@@ -55,6 +57,7 @@ export async function PUT(request: Request, context: RouteContext) {
       ? body.images.filter((url) => typeof url === "string" && url.length > 0)
       : [];
     const sizes = parseSizes(body.sizes);
+    const priority = Number(body.priority ?? 20);
     const discountPercent = parseDiscountPercent(body.discountPercent);
 
     if (!title || !description) {
@@ -69,6 +72,12 @@ export async function PUT(request: Request, context: RouteContext) {
     if (!sizes) {
       return NextResponse.json(
         { error: "Exactly 3 size options with labels, prices, and stock are required" },
+        { status: 400 },
+      );
+    }
+    if (!Number.isInteger(priority) || priority < 1 || priority > 20) {
+      return NextResponse.json(
+        { error: "Homepage priority must be a whole number from 1 to 20" },
         { status: 400 },
       );
     }
@@ -87,6 +96,7 @@ export async function PUT(request: Request, context: RouteContext) {
         images,
         category: body.category,
         sizes,
+        priority,
         inStock: body.inStock !== false,
         discountPercent,
       },
@@ -97,7 +107,8 @@ export async function PUT(request: Request, context: RouteContext) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
-    revalidateStoreTags(CACHE_TAGS.products, CACHE_TAGS.categories);
+    revalidateTag(CACHE_TAGS.products, { expire: 0 });
+    revalidateStoreTags(CACHE_TAGS.categories);
     return NextResponse.json(product);
   } catch (err) {
     console.error("Update product failed", err);

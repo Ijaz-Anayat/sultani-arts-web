@@ -1,3 +1,4 @@
+import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { requireAdmin } from "@/lib/admin";
@@ -32,6 +33,7 @@ export async function POST(request: Request) {
       images?: string[];
       category?: string;
       sizes?: unknown;
+      priority?: unknown;
       inStock?: boolean;
       discountPercent?: unknown;
     };
@@ -42,6 +44,7 @@ export async function POST(request: Request) {
       ? body.images.filter((url) => typeof url === "string" && url.length > 0)
       : [];
     const sizes = parseSizes(body.sizes);
+    const priority = Number(body.priority ?? 20);
     const discountPercent = parseDiscountPercent(body.discountPercent);
 
     if (!title || !description) {
@@ -59,6 +62,12 @@ export async function POST(request: Request) {
         { status: 400 },
       );
     }
+    if (!Number.isInteger(priority) || priority < 1 || priority > 20) {
+      return NextResponse.json(
+        { error: "Homepage priority must be a whole number from 1 to 20" },
+        { status: 400 },
+      );
+    }
 
     await connectDB();
     const category = await Category.findById(body.category);
@@ -72,12 +81,14 @@ export async function POST(request: Request) {
       images,
       category: body.category,
       sizes,
+      priority,
       inStock: body.inStock !== false,
       discountPercent,
     });
 
     const populated = await product.populate("category");
-    revalidateStoreTags(CACHE_TAGS.products, CACHE_TAGS.categories);
+    revalidateTag(CACHE_TAGS.products, { expire: 0 });
+    revalidateStoreTags(CACHE_TAGS.categories);
     return NextResponse.json(populated, { status: 201 });
   } catch (err) {
     console.error("Create product failed", err);

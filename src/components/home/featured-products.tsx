@@ -12,7 +12,7 @@ type Props = {
 export async function FeaturedProducts({ limit = 8, compact = false }: Props) {
   let products: ProductDTO[] = [];
   try {
-    products = await getProducts(undefined, { limit });
+    products = await getProducts(undefined, { limit, priorityOrder: true });
   } catch {
     products = [];
   }

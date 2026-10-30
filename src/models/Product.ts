@@ -33,6 +33,7 @@ const productSchema = new Schema({
       message: "Each product must have exactly 3 size options",
     },
   },
+  priority: { type: Number, required: true, default: 20, min: 1, max: 20 },
   inStock: { type: Boolean, default: true },
   discountPercent: { type: Number, default: 0, min: 0, max: 100 },
   createdAt: { type: Date, default: Date.now },
@@ -41,6 +42,11 @@ const productSchema = new Schema({
 export type ProductDocument = InferSchemaType<typeof productSchema> & {
   _id: mongoose.Types.ObjectId;
 };
+
+const cachedProductModel = mongoose.models.Product as Model<ProductDocument> | undefined;
+if (cachedProductModel && !cachedProductModel.schema.path("priority")) {
+  mongoose.deleteModel("Product");
+}
 
 export const Product: Model<ProductDocument> =
   (mongoose.models.Product as Model<ProductDocument> | undefined) ??

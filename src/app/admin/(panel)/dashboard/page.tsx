@@ -12,10 +12,11 @@ export default async function AdminDashboardPage() {
       </p>
       <h1 className="mt-2 font-serif text-4xl">Dashboard</h1>
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-3">
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard label="Products" value={stats.productCount} href="/admin/products" />
         <StatCard label="Categories" value={stats.categoryCount} href="/admin/categories" />
         <StatCard label="Orders" value={stats.orderCount} href="/admin/orders" />
+        <StatCard label="Page views" value={stats.pageViewCount} href="/admin/analytics" />
       </div>
 
       <div className="mt-12">

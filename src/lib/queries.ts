@@ -1,4 +1,5 @@
 import { unstable_cache } from "next/cache";
+import type { PipelineStage } from "mongoose";
 import { CACHE_TAGS } from "@/lib/cache-tags";
 import { connectDB } from "@/lib/mongodb";
 import { CATEGORY_FALLBACK_IMAGES, DEFAULT_CATEGORY_IMAGE } from "@/lib/constants";
@@ -10,6 +11,7 @@ import { Order } from "@/models/Order";
 import { Frame } from "@/models/Frame";
 import { Review } from "@/models/Review";
 import { Settings } from "@/models/Settings";
+import { PageView } from "@/models/PageView";
 import { DEFAULT_SIZES } from "@/lib/constants";
 import { REVIEW_POOL } from "@/lib/review-pool-data";
 import { pickReviewIndexes, type ReviewDTO } from "@/lib/reviews";
@@ -90,6 +92,7 @@ export async function getCategories(): Promise<CategoryDTO[]> {
 
 type ProductQueryOptions = {
   limit?: number;
+  priorityOrder?: boolean;
 };
 
 async function fetchProducts(
@@ -105,11 +108,29 @@ async function fetchProducts(
     filter.category = category._id;
   }
 
-  let query = Product.find(filter).populate("category").sort({ createdAt: -1 });
-  if (options.limit && options.limit > 0) {
-    query = query.limit(options.limit);
+  if (options.priorityOrder) {
+    const pipeline: PipelineStage[] = [
+      { $match: filter },
+      { $addFields: { sortPriority: { $ifNull: ["$priority", 20] } } },
+      { $sort: { sortPriority: 1, createdAt: -1 } },
+      ...(options.limit && options.limit > 0 ? [{ $limit: options.limit }] : []),
+      {
+        $lookup: {
+          from: Category.collection.name,
+          localField: "category",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      { $unwind: { path: "$category", preserveNullAndEmptyArrays: true } },
+      { $project: { sortPriority: 0 } },
+    ];
+    const products = await Product.aggregate(pipeline);
+    return serialize(products as unknown as ProductDTO[]).map(normalizeProduct);
   }
 
+  let query = Product.find(filter).populate("category").sort({ createdAt: -1 });
+  if (options.limit && options.limit > 0) query = query.limit(options.limit);
   const products = await query.lean();
   return serialize(products as unknown as ProductDTO[]).map(normalizeProduct);
 }
@@ -119,9 +140,10 @@ export async function getProducts(
   options: ProductQueryOptions = {},
 ): Promise<ProductDTO[]> {
   const limitKey = options.limit && options.limit > 0 ? String(options.limit) : "all";
+  const priorityKey = options.priorityOrder ? "priority" : "date";
   return unstable_cache(
     () => fetchProducts(categorySlug, options),
-    ["products", categorySlug ?? "all", limitKey],
+    ["products", categorySlug ?? "all", limitKey, priorityKey],
     {
       revalidate: STORE_REVALIDATE_SECONDS,
       tags: [CACHE_TAGS.products],
@@ -219,10 +241,11 @@ export async function getReviewsForProduct(productId: string): Promise<ReviewDTO
 export async function getDashboardStats() {
   await connectDB();
 
-  const [productCount, categoryCount, orderCount, recentOrders] = await Promise.all([
+  const [productCount, categoryCount, orderCount, pageViewCount, recentOrders] = await Promise.all([
     Product.countDocuments(),
     Category.countDocuments(),
     Order.countDocuments(),
+    PageView.countDocuments(),
     Order.find().sort({ createdAt: -1 }).limit(6).lean(),
   ]);
 
@@ -230,6 +253,7 @@ export async function getDashboardStats() {
     productCount,
     categoryCount,
     orderCount,
+    pageViewCount,
     recentOrders: serialize(recentOrders as unknown as OrderDTO[]),
   };
 }

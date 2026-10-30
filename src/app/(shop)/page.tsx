@@ -33,7 +33,7 @@ export default function Home() {
         }}
       />
       <Hero />
-      <FeaturedProducts limit={12} compact />
+      <FeaturedProducts limit={16} compact />
       <section className="px-4 py-14 sm:px-5 sm:py-20 md:px-8">
         <div className="mx-auto grid max-w-[1100px] gap-4 sm:grid-cols-3">
           <RevealOnScroll>

@@ -22,6 +22,7 @@ export type ProductDTO = {
   images: string[];
   category: CategoryDTO | string;
   sizes: ProductSize[];
+  priority?: number;
   inStock: boolean;
   discountPercent?: number;
   createdAt?: string;

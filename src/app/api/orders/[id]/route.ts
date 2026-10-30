@@ -35,3 +35,26 @@ export async function PUT(request: Request, context: RouteContext) {
     return NextResponse.json({ error: "Could not update order" }, { status: 500 });
   }
 }
+
+export async function DELETE(_request: Request, context: RouteContext) {
+  const { error } = await requireAdmin();
+  if (error) return error;
+
+  const { id } = await context.params;
+  if (!isValidObjectId(id)) {
+    return NextResponse.json({ error: "Order not found" }, { status: 404 });
+  }
+
+  try {
+    await connectDB();
+    const deleted = await Order.findByIdAndDelete(id);
+    if (!deleted) {
+      return NextResponse.json({ error: "Order not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    console.error("Delete order failed", err);
+    return NextResponse.json({ error: "Could not delete order" }, { status: 500 });
+  }
+}

@@ -93,8 +93,8 @@ export function CheckoutForm() {
   }
 
   return (
-    <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_380px]">
-      <form onSubmit={onSubmit} className="space-y-4">
+    <div className="mx-auto grid w-full min-w-0 grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-10">
+      <form onSubmit={onSubmit} className="min-w-0 space-y-4">
         <h1 className="font-serif text-4xl">Checkout</h1>
         <p className="font-serif text-muted">
           Guest order — no account needed. We only need where to send the work.
@@ -104,7 +104,7 @@ export function CheckoutForm() {
           placeholder="Full name"
           value={name}
           onChange={(event) => setName(event.target.value)}
-          className="w-full border border-line bg-ivory px-4 py-3 outline-none focus:border-gold"
+          className="min-h-12 w-full min-w-0 border border-line bg-ivory px-4 py-3 outline-none focus:border-gold"
         />
         <input
           required
@@ -113,7 +113,7 @@ export function CheckoutForm() {
           placeholder="Email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          className="w-full border border-line bg-ivory px-4 py-3 outline-none focus:border-gold"
+          className="min-h-12 w-full min-w-0 border border-line bg-ivory px-4 py-3 outline-none focus:border-gold"
         />
         <input
           required
@@ -121,21 +121,21 @@ export function CheckoutForm() {
           placeholder="Phone"
           value={phone}
           onChange={(event) => setPhone(event.target.value)}
-          className="w-full border border-line bg-ivory px-4 py-3 outline-none focus:border-gold"
+          className="min-h-12 w-full min-w-0 border border-line bg-ivory px-4 py-3 outline-none focus:border-gold"
         />
         <input
           required
           placeholder="Address"
           value={address}
           onChange={(event) => setAddress(event.target.value)}
-          className="w-full border border-line bg-ivory px-4 py-3 outline-none focus:border-gold"
+          className="min-h-12 w-full min-w-0 border border-line bg-ivory px-4 py-3 outline-none focus:border-gold"
         />
         <input
           required
           placeholder="City"
           value={city}
           onChange={(event) => setCity(event.target.value)}
-          className="w-full border border-line bg-ivory px-4 py-3 outline-none focus:border-gold"
+          className="min-h-12 w-full min-w-0 border border-line bg-ivory px-4 py-3 outline-none focus:border-gold"
         />
         <label className="flex cursor-pointer items-start gap-3 border border-line bg-cream/40 p-4">
           <input
@@ -155,17 +155,21 @@ export function CheckoutForm() {
         <button
           type="submit"
           disabled={pending}
-          className="w-full bg-ink py-3.5 font-sans text-[0.72rem] tracking-[0.24em] text-ivory uppercase hover:bg-gold-deep disabled:opacity-60"
+          className="flex min-h-12 w-full flex-wrap items-center justify-center gap-x-2 bg-ink px-3 py-3 font-sans text-[0.68rem] tracking-[0.12em] text-ivory uppercase hover:bg-gold-deep disabled:opacity-60 sm:text-[0.72rem] sm:tracking-[0.2em]"
         >
-          {pending ? "Placing order…" : `Place order · ${formatPrice(total)}`}
+          <span>{pending ? "Placing order…" : "Place order"}</span>
+          <span className="whitespace-nowrap tracking-normal">{formatPrice(total)}</span>
         </button>
       </form>
 
-      <aside className="border border-line bg-cream/40 p-6">
+      <aside className="min-w-0 border border-line bg-cream/40 p-4 sm:p-6">
         <h2 className="font-serif text-2xl">Summary</h2>
         <ul className="mt-5 space-y-4">
           {cart.map((item) => (
-            <li key={`${item.productId}-${item.size}-${item.frameId ?? "none"}`} className="flex gap-3">
+            <li
+              key={`${item.productId}-${item.size}-${item.frameId ?? "none"}`}
+              className="grid min-w-0 grid-cols-[48px_minmax(0,1fr)_auto] items-center gap-2 sm:gap-3"
+            >
               <div className="relative h-16 w-12 overflow-hidden bg-parchment">
                 <Image src={item.image} alt="" fill className="object-cover" sizes="48px" />
               </div>
@@ -176,7 +180,7 @@ export function CheckoutForm() {
                   {item.frameColor ? ` · ${item.frameColor} frame` : ""} × {item.quantity}
                 </p>
               </div>
-              <div className="text-right text-sm">
+              <div className="min-w-0 text-right text-xs sm:text-sm">
                 <p>{formatPrice(item.price * item.quantity)}</p>
                 {item.originalPrice && item.originalPrice > item.price ? (
                   <p className="text-xs text-muted line-through">

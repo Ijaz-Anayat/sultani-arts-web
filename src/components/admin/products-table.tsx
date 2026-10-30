@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import type { ProductDTO } from "@/lib/types";
 import { formatPrice, startingPrice } from "@/lib/pricing";
 import { getTotalStock } from "@/lib/product-sizes";
+import { resolveProductImage } from "@/lib/site-images";
 
 export function ProductsTable({ products }: { products: ProductDTO[] }) {
   const router = useRouter();
@@ -25,6 +27,7 @@ export function ProductsTable({ products }: { products: ProductDTO[] }) {
         <thead className="bg-cream font-sans text-[0.65rem] tracking-[0.18em] text-muted uppercase">
           <tr>
             <th className="px-4 py-3">Title</th>
+            <th className="px-4 py-3">Home priority</th>
             <th className="px-4 py-3">Category</th>
             <th className="px-4 py-3">From</th>
             <th className="px-4 py-3">Discount</th>
@@ -36,7 +39,23 @@ export function ProductsTable({ products }: { products: ProductDTO[] }) {
         <tbody>
           {products.map((product) => (
             <tr key={product._id} className="border-t border-line">
-              <td className="px-4 py-3 font-serif">{product.title}</td>
+              <td className="min-w-[240px] px-4 py-3">
+                <div className="flex items-center gap-3">
+                  <div className="relative h-16 w-12 shrink-0 overflow-hidden bg-parchment">
+                    <Image
+                      src={resolveProductImage(product.images[0])}
+                      alt={product.title}
+                      fill
+                      sizes="48px"
+                      className="object-cover"
+                    />
+                  </div>
+                  <span className="font-serif">{product.title}</span>
+                </div>
+              </td>
+              <td className="px-4 py-3 text-sm text-muted">
+                {product.priority ?? 20}
+              </td>
               <td className="px-4 py-3 text-sm text-muted">
                 {typeof product.category === "object" ? product.category.name : "—"}
               </td>
