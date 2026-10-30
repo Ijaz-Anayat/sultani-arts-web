@@ -9,7 +9,7 @@ import {
 } from "@/lib/pricing";
 import { getCashOnDeliveryFees, getGlobalDiscountPercent } from "@/lib/queries";
 import { frameMatchesSize } from "@/lib/frames";
-import { notifyNewOrder } from "@/lib/notify-order";
+import { notifyNewOrder, sendCustomerOrderConfirmation } from "@/lib/notify-order";
 import { getSizeStock } from "@/lib/product-sizes";
 import { Order } from "@/models/Order";
 import { Frame } from "@/models/Frame";
@@ -204,7 +204,25 @@ export async function POST(request: Request) {
       });
     }
 
-    return NextResponse.json(order, { status: 201 });
+    let customerEmailSent = false;
+    try {
+      await sendCustomerOrderConfirmation({
+        orderId: String(order._id),
+        customer: { name, email, phone, address, city },
+        items,
+        totalAmount,
+        cashOnDelivery,
+        cashOnDeliveryFee,
+      });
+      customerEmailSent = true;
+    } catch (emailError) {
+      console.error("Customer order confirmation email failed", {
+        orderId: String(order._id),
+        error: emailError,
+      });
+    }
+
+    return NextResponse.json({ ...serialize(order), customerEmailSent }, { status: 201 });
   } catch (err) {
     console.error("Create order failed", err);
     return NextResponse.json({ error: "Could not place order" }, { status: 500 });

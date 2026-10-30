@@ -21,6 +21,7 @@ export function CheckoutForm({ cashOnDeliveryFees }: { cashOnDeliveryFees: CashO
   const [orderId, setOrderId] = useState<string | null>(null);
   const [whatsAppUrl, setWhatsAppUrl] = useState<string | null>(null);
   const [whatsAppUnavailable, setWhatsAppUnavailable] = useState(false);
+  const [customerEmailSent, setCustomerEmailSent] = useState(false);
 
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const codFee = getCashOnDeliveryFeeForOrder(
@@ -54,6 +55,7 @@ export function CheckoutForm({ cashOnDeliveryFees }: { cashOnDeliveryFees: CashO
         _id?: string;
         totalAmount?: number;
         cashOnDeliveryFee?: number;
+        customerEmailSent?: boolean;
         error?: string;
       };
 
@@ -77,6 +79,7 @@ export function CheckoutForm({ cashOnDeliveryFees }: { cashOnDeliveryFees: CashO
       clearCart();
       setWhatsAppUrl(confirmationUrl);
       setWhatsAppUnavailable(!confirmationUrl);
+      setCustomerEmailSent(body.customerEmailSent === true);
       setOrderId(body._id);
     } catch (requestError) {
       console.error("Place order request failed", requestError);
@@ -96,6 +99,11 @@ export function CheckoutForm({ cashOnDeliveryFees }: { cashOnDeliveryFees: CashO
         <p className="mx-auto mt-4 max-w-md font-serif text-lg text-muted">
           Your order has been received. We will contact you shortly to confirm
           shipping.
+        </p>
+        <p className="mx-auto mt-3 max-w-md font-sans text-sm leading-6 text-muted" role="status">
+          {customerEmailSent
+            ? `A confirmation email has been sent to ${email}.`
+            : `Your order is confirmed, but we could not send a confirmation email to ${email}. Please check the address or contact us if you need help.`}
         </p>
         <p className="mt-4 font-sans text-xs tracking-[0.16em] text-muted uppercase">
           Reference {orderId}
