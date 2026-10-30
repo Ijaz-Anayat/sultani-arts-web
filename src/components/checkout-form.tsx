@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useStore } from "@/components/store-provider";
 import { getCashOnDeliveryFeeForOrder, formatPrice } from "@/lib/pricing";
+import { createOrderWhatsAppUrl } from "@/lib/order-whatsapp";
 import type { CashOnDeliveryFees } from "@/lib/types";
 
 export function CheckoutForm({ cashOnDeliveryFees }: { cashOnDeliveryFees: CashOnDeliveryFees }) {
@@ -18,6 +19,8 @@ export function CheckoutForm({ cashOnDeliveryFees }: { cashOnDeliveryFees: CashO
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
+  const [whatsAppUrl, setWhatsAppUrl] = useState<string | null>(null);
+  const [whatsAppUnavailable, setWhatsAppUnavailable] = useState(false);
 
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const codFee = getCashOnDeliveryFeeForOrder(
@@ -31,31 +34,56 @@ export function CheckoutForm({ cashOnDeliveryFees }: { cashOnDeliveryFees: CashO
     setError("");
     setPending(true);
 
-    const response = await fetch("/api/orders", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        customer: { name, email, phone, address, city },
-        items: cart.map((item) => ({
-          productId: item.productId,
-          size: item.size,
-          quantity: item.quantity,
-          frameId: item.frameId,
-        })),
-        cashOnDelivery,
-      }),
-    });
+    try {
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customer: { name, email, phone, address, city },
+          items: cart.map((item) => ({
+            productId: item.productId,
+            size: item.size,
+            quantity: item.quantity,
+            frameId: item.frameId,
+          })),
+          cashOnDelivery,
+        }),
+      });
 
-    const body = (await response.json()) as { _id?: string; error?: string };
-    setPending(false);
+      const body = (await response.json()) as {
+        _id?: string;
+        totalAmount?: number;
+        cashOnDeliveryFee?: number;
+        error?: string;
+      };
 
-    if (!response.ok || !body._id) {
-      setError(body.error || "Could not place the order");
-      return;
+      if (!response.ok || !body._id) {
+        setError(body.error || "Could not place the order");
+        return;
+      }
+
+      const confirmationUrl =
+        typeof body.totalAmount === "number"
+          ? createOrderWhatsAppUrl(phone, {
+              customerName: name,
+              orderId: body._id,
+              items: cart,
+              totalAmount: body.totalAmount,
+              cashOnDelivery,
+              cashOnDeliveryFee: body.cashOnDeliveryFee ?? 0,
+            })
+          : null;
+
+      clearCart();
+      setWhatsAppUrl(confirmationUrl);
+      setWhatsAppUnavailable(!confirmationUrl);
+      setOrderId(body._id);
+    } catch (requestError) {
+      console.error("Place order request failed", requestError);
+      setError("Could not place the order. Please check your connection and try again.");
+    } finally {
+      setPending(false);
     }
-
-    clearCart();
-    setOrderId(body._id);
   }
 
   if (orderId) {
@@ -72,6 +100,31 @@ export function CheckoutForm({ cashOnDeliveryFees }: { cashOnDeliveryFees: CashO
         <p className="mt-4 font-sans text-xs tracking-[0.16em] text-muted uppercase">
           Reference {orderId}
         </p>
+        {whatsAppUrl ? (
+          <div className="mx-auto mt-8 max-w-md">
+            <p className="font-sans text-sm leading-6 text-muted">
+              Share your order details with Sultani Arts on WhatsApp so our team can confirm it.
+            </p>
+            <a
+              href={whatsAppUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-block bg-[#25D366] px-6 py-3 font-sans text-[0.68rem] tracking-[0.12em] text-white uppercase transition-colors hover:bg-[#20bd5a]"
+            >
+              Send order details to Sultani Arts
+            </a>
+            <p className="mt-2 font-sans text-xs text-muted">
+              WhatsApp will open with a message ready. Tap Send to share it with our team.
+            </p>
+          </div>
+        ) : null}
+        {whatsAppUnavailable ? (
+          <p className="mx-auto mt-6 max-w-md font-sans text-sm text-muted">
+            We could not prepare the WhatsApp message because the phone number format is not
+            supported. Your order is confirmed; our team will contact you using the details
+            provided.
+          </p>
+        ) : null}
         <Link
           href="/shop"
           className="mt-8 inline-block bg-ink px-6 py-3 font-sans text-[0.68rem] tracking-[0.2em] text-ivory uppercase"
