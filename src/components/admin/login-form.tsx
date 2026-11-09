@@ -1,10 +1,12 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
 import { loginAdmin } from "@/lib/admin-login";
 import { Logo } from "@/components/logo";
 
 export function AdminLoginForm() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -20,12 +22,13 @@ export function AdminLoginForm() {
       const result = await loginAdmin(email.trim().toLowerCase(), password);
       if (result?.error) {
         setError(result.error);
-        setPending(false);
+        return;
       }
-    } catch (err) {
-      setError("Could not sign in. Check the email, password, and try again.");
+      router.replace("/admin/dashboard");
+    } catch {
+      setError("Sign-in request failed. Check your connection and try again.");
+    } finally {
       setPending(false);
-      console.error(err);
     }
   }
 
@@ -78,7 +81,11 @@ export function AdminLoginForm() {
               {password.length} character{password.length === 1 ? "" : "s"}
             </p>
           </label>
-          {error ? <p className="font-sans text-sm text-burnt-orange">{error}</p> : null}
+          {error ? (
+            <p aria-live="polite" className="font-sans text-sm text-burnt-orange">
+              {error}
+            </p>
+          ) : null}
           <button
             type="submit"
             disabled={pending}

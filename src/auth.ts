@@ -23,7 +23,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const password = (Array.isArray(rawPassword) ? rawPassword[0] : rawPassword)?.toString();
 
         if (!email || !password) {
-          console.error("Admin login missing credentials");
           return null;
         }
 

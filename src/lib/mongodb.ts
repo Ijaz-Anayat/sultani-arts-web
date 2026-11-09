@@ -33,14 +33,29 @@ export async function connectDB() {
 
   assertMongoUri(MONGODB_URI);
 
-  if (cached.conn) {
+  if (mongoose.connection.readyState === 1) {
+    cached.conn = mongoose;
     return cached.conn;
+  }
+
+  cached.conn = null;
+  if (mongoose.connection.readyState === 0) {
+    cached.promise = null;
   }
 
   if (!cached.promise) {
     cached.promise = mongoose.connect(MONGODB_URI, { dbName: "Sultani-arts" });
   }
 
-  cached.conn = await cached.promise;
-  return cached.conn;
+  const connectionPromise = cached.promise;
+  try {
+    cached.conn = await connectionPromise;
+    return cached.conn;
+  } catch (error) {
+    if (cached.promise === connectionPromise) {
+      cached.promise = null;
+      cached.conn = null;
+    }
+    throw error;
+  }
 }

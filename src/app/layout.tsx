@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import { Cormorant_Garamond, Great_Vibes, Outfit } from "next/font/google";
+import { DM_Sans, Playfair_Display } from "next/font/google";
 import { AuthSessionProvider } from "@/components/auth-session-provider";
 import { StoreProvider } from "@/components/store-provider";
 import { getGlobalDiscountPercent } from "@/lib/queries";
@@ -14,26 +14,18 @@ import {
 import { SITE_IMAGES } from "@/lib/site-images";
 import "./globals.css";
 
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
+const playfairDisplay = Playfair_Display({
+  variable: "--font-playfair-display",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
-const outfit = Outfit({
-  variable: "--font-outfit",
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
   display: "swap",
-});
-
-const greatVibes = Great_Vibes({
-  variable: "--font-great-vibes",
-  subsets: ["latin"],
-  weight: "400",
-  display: "swap",
-  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -95,7 +87,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${cormorant.variable} ${outfit.variable} ${greatVibes.variable} h-full antialiased`}
+      className={`${playfairDisplay.variable} ${dmSans.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-ivory font-sans text-ink">
         <AuthSessionProvider>

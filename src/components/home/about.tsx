@@ -18,13 +18,13 @@ export function About() {
             />
           </div>
           <div className="mt-4 border border-line bg-ivory p-4 md:hidden">
-            <p className="font-script text-3xl text-burnt-orange">Sultani</p>
+            <p className="font-serif text-3xl text-burnt-orange">Sultani</p>
             <p className="mt-1 font-sans text-[0.62rem] tracking-[0.16em] text-muted uppercase">
               Crafted slowly, meant to remain
             </p>
           </div>
           <div className="absolute -right-3 -bottom-6 hidden max-w-[220px] border border-line bg-ivory p-6 shadow-[0_20px_40px_-28px_rgba(28,24,20,0.4)] md:block lg:-right-8">
-            <p className="font-script text-4xl text-burnt-orange">Sultani</p>
+            <p className="font-serif text-4xl text-burnt-orange">Sultani</p>
             <p className="mt-2 font-sans text-[0.65rem] tracking-[0.2em] text-muted uppercase">
               Crafted slowly, meant to remain
             </p>

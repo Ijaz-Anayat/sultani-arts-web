@@ -36,9 +36,8 @@
   --color-muted: var(--muted);
   --color-line: var(--line);
   --color-canvas: var(--white);
-  --font-serif: var(--font-cormorant);
-  --font-sans: var(--font-outfit);
-  --font-script: var(--font-great-vibes);
+  --font-serif: var(--font-playfair-display);
+  --font-sans: var(--font-dm-sans);
 }
 
 html {

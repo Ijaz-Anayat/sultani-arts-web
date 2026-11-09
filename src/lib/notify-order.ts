@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import { formatPrice } from "@/lib/pricing";
+import { getSiteUrl } from "@/lib/seo";
 
 type OrderNotifyItem = {
   title: string;
@@ -49,13 +50,8 @@ function cleanEnv(value?: string) {
   return next.replace(/^RESEND_API_KEY=/i, "").replace(/^RESEND_FROM=/i, "").trim();
 }
 
-function siteUrl() {
-  const raw = process.env.NEXTAUTH_URL?.trim() || "https://sultani-arts-web.vercel.app";
-  return raw.replace(/\/$/, "");
-}
-
 function buildOrderEmailHtml(payload: OrderNotifyPayload) {
-  const adminUrl = `${siteUrl()}/admin/orders`;
+  const adminUrl = `${getSiteUrl()}/admin/orders`;
   const itemRows = payload.items
     .map((item, index) => {
       const background = index % 2 === 0 ? "#faf6f0" : "#f3ece3";

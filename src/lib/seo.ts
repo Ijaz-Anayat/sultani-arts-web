@@ -8,10 +8,9 @@ export const SITE_DESCRIPTION =
 
 export function getSiteUrl() {
   const raw =
-    process.env.NEXTAUTH_URL?.trim() ||
     process.env.NEXT_PUBLIC_SITE_URL?.trim() ||
-    "https://sultani-arts-web.vercel.app";
-  return raw.replace(/\/$/, "");
+    "https://sultaniarts.com";
+  return raw.replace(/\/+$/, "");
 }
 
 export function absoluteUrl(path = "/") {

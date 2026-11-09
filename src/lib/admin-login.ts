@@ -1,44 +1,64 @@
 "use server";
 
 import { AuthError } from "next-auth";
-import { compare } from "bcryptjs";
 import { signIn } from "@/auth";
-import { connectDB } from "@/lib/mongodb";
-import { Admin } from "@/models/Admin";
 
-export async function loginAdmin(email: string, password: string) {
-  const normalizedEmail = email.trim().toLowerCase();
+function logSignInFailure(error: unknown) {
+  const authError = error instanceof AuthError ? error : null;
+  const causes: { name: string; code?: string | number }[] = [];
+  let current: unknown = authError?.cause ?? error;
 
-  try {
-    await connectDB();
-    const admin = await Admin.findOne({ email: normalizedEmail }).lean();
-    if (!admin?.password) {
-      return { error: "No admin account exists for this email." };
-    }
-
-    const matches = await compare(password, admin.password);
-    if (!matches) {
-      return { error: "Invalid email or password." };
-    }
-  } catch (error) {
-    console.error("Admin pre-check failed", error);
-    return {
-      error: "Could not reach the database. Check MONGODB_URI and Atlas IP access.",
-    };
+  for (let depth = 0; depth < 5 && current; depth += 1) {
+    const record = typeof current === "object" ? current as Record<string, unknown> : null;
+    const name =
+      current instanceof Error
+        ? current.name
+        : typeof record?.name === "string"
+          ? record.name
+          : typeof current;
+    const code =
+      typeof record?.code === "string" || typeof record?.code === "number"
+        ? record.code
+        : undefined;
+    causes.push({ name, ...(code === undefined ? {} : { code }) });
+    current = record?.err ?? record?.cause;
   }
 
-  const formData = new FormData();
-  formData.set("email", normalizedEmail);
-  formData.set("password", password);
-  formData.set("redirectTo", "/admin/dashboard");
+  console.error("Admin sign-in failed", {
+    type: authError?.type ?? "UnexpectedError",
+    causes,
+  });
+}
+
+export async function loginAdmin(email: string, password: string) {
+  if (typeof email !== "string" || typeof password !== "string") {
+    return { error: "Enter a valid email address and password." };
+  }
+
+  const normalizedEmail = email.trim().toLowerCase();
+  if (!normalizedEmail.includes("@") || !password) {
+    return { error: "Enter a valid email address and password." };
+  }
 
   try {
-    await signIn("credentials", formData);
+    await signIn("credentials", {
+      email: normalizedEmail,
+      password,
+      redirectTo: "/admin/dashboard",
+      redirect: false,
+    });
     return { error: null };
   } catch (error) {
     if (error instanceof AuthError) {
-      return { error: `Password is correct, but session failed (${error.type}).` };
+      if (error.type === "CredentialsSignin") {
+        return { error: "Invalid email or password." };
+      }
+
+      logSignInFailure(error);
+      return { error: "Sign-in is temporarily unavailable. Please try again." };
     }
-    throw error;
+
+    logSignInFailure(error);
+    return { error: "Could not complete sign-in. Please try again." };
   }
 }
