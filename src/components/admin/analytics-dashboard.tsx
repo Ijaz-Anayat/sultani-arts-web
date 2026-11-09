@@ -173,7 +173,7 @@ export function AnalyticsDashboard({
                       {page.product ? (
                         <Link
                           href={page.path}
-                          className="flex items-center gap-3 text-ink transition-colors hover:text-gold-deep"
+                          className="flex items-center gap-3 text-ink transition-colors hover:text-burnt-orange"
                         >
                           <span className="relative h-14 w-12 shrink-0 overflow-hidden bg-parchment">
                             <Image

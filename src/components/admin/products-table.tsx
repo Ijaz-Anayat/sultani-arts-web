@@ -74,7 +74,7 @@ export function ProductsTable({ products }: { products: ProductDTO[] }) {
               <td className="px-4 py-3 text-right">
                 <Link
                   href={`/admin/products/${product._id}/edit`}
-                  className="mr-4 font-sans text-[0.65rem] tracking-[0.16em] text-gold-deep uppercase"
+                  className="mr-4 font-sans text-[0.65rem] tracking-[0.16em] text-burnt-orange uppercase"
                 >
                   Edit
                 </Link>

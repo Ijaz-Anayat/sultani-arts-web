@@ -54,7 +54,7 @@ export function PriceDisplay({
       <span className={`text-muted line-through ${classes.original}`}>
         {formatPrice(originalPrice)}
       </span>
-      <span className="font-sans text-[0.62rem] tracking-[0.14em] text-gold-deep uppercase">
+      <span className="font-sans text-[0.62rem] tracking-[0.14em] text-burnt-orange uppercase">
         {getEffectiveDiscountPercent(globalDiscountPercent, productDiscountPercent)}% off
       </span>
     </span>

@@ -76,13 +76,13 @@ export function DiscountManager({ initialGlobalDiscountPercent }: Props) {
         </p>
       </label>
 
-      {error ? <p className="text-sm text-gold-deep">{error}</p> : null}
+      {error ? <p className="text-sm text-burnt-orange">{error}</p> : null}
       {success ? <p className="text-sm text-ink-soft">{success}</p> : null}
 
       <button
         type="submit"
         disabled={pending}
-        className="bg-ink px-8 py-3.5 font-sans text-[0.72rem] tracking-[0.24em] text-ivory uppercase transition-colors hover:bg-gold-deep disabled:opacity-60"
+        className="bg-ink px-8 py-3.5 font-sans text-[0.72rem] tracking-[0.24em] text-ivory uppercase transition-colors hover:bg-burnt-orange disabled:opacity-60"
       >
         {pending ? "Saving…" : "Save discount"}
       </button>

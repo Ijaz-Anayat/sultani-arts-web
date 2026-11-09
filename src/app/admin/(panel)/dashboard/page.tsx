@@ -7,7 +7,7 @@ export default async function AdminDashboardPage() {
 
   return (
     <div>
-      <p className="font-sans text-[0.65rem] tracking-[0.28em] text-gold-deep uppercase">
+      <p className="font-sans text-[0.65rem] tracking-[0.28em] text-burnt-orange uppercase">
         Overview
       </p>
       <h1 className="mt-2 font-serif text-4xl">Dashboard</h1>
@@ -24,7 +24,7 @@ export default async function AdminDashboardPage() {
           <h2 className="font-serif text-2xl">Recent orders</h2>
           <Link
             href="/admin/orders"
-            className="font-sans text-[0.68rem] tracking-[0.2em] text-gold-deep uppercase"
+            className="font-sans text-[0.68rem] tracking-[0.2em] text-burnt-orange uppercase"
           >
             View all
           </Link>

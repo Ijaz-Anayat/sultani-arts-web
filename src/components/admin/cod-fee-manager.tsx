@@ -75,13 +75,13 @@ export function CodFeeManager({ initialFees }: Props) {
         ) : null}
       </div>
 
-      {error ? <p className="text-sm text-gold-deep">{error}</p> : null}
+      {error ? <p className="text-sm text-burnt-orange">{error}</p> : null}
       {success ? <p className="text-sm text-ink-soft">{success}</p> : null}
 
       <button
         type="submit"
         disabled={pending || Object.keys(fees).length === 0}
-        className="bg-ink px-8 py-3.5 font-sans text-[0.72rem] tracking-[0.24em] text-ivory uppercase transition-colors hover:bg-gold-deep disabled:opacity-60"
+        className="bg-ink px-8 py-3.5 font-sans text-[0.72rem] tracking-[0.24em] text-ivory uppercase transition-colors hover:bg-burnt-orange disabled:opacity-60"
       >
         {pending ? "Saving…" : "Save COD fees"}
       </button>

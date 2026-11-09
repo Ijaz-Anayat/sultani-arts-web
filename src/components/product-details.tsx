@@ -80,7 +80,7 @@ export function ProductDetails({
       </div>
 
       <div className="mx-auto w-full max-w-md lg:mx-0 lg:max-w-none">
-        <p className="font-sans text-[0.62rem] tracking-[0.28em] text-gold-deep uppercase">
+        <p className="font-sans text-[0.62rem] tracking-[0.28em] text-burnt-orange uppercase">
           {categoryName}
         </p>
         <h1 className="mt-2 font-serif text-2xl leading-tight sm:text-3xl">{product.title}</h1>
@@ -232,7 +232,7 @@ export function ProductDetails({
             });
             setCartOpen(true);
           }}
-          className="mt-5 w-full bg-ink py-3 font-sans text-[0.68rem] tracking-[0.22em] text-ivory uppercase transition-colors hover:bg-gold-deep disabled:opacity-50 sm:py-3.5 sm:text-[0.72rem] sm:tracking-[0.24em]"
+          className="mt-5 w-full bg-ink py-3 font-sans text-[0.68rem] tracking-[0.22em] text-ivory uppercase transition-colors hover:bg-burnt-orange disabled:opacity-50 sm:py-3.5 sm:text-[0.72rem] sm:tracking-[0.24em]"
         >
           {selectedInStock
             ? `Add to cart · ${formatPrice(selectedDiscounted)}`

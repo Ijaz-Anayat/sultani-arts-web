@@ -92,7 +92,7 @@ export function CheckoutForm({ cashOnDeliveryFees }: { cashOnDeliveryFees: CashO
   if (orderId) {
     return (
       <div className="border border-line bg-cream/50 px-6 py-16 text-center">
-        <p className="font-sans text-[0.65rem] tracking-[0.28em] text-gold-deep uppercase">
+        <p className="font-sans text-[0.65rem] tracking-[0.28em] text-burnt-orange uppercase">
           Confirmed
         </p>
         <h1 className="mt-3 font-serif text-4xl">Thank you</h1>
@@ -149,7 +149,7 @@ export function CheckoutForm({ cashOnDeliveryFees }: { cashOnDeliveryFees: CashO
         <h1 className="font-serif text-4xl">Your cart is empty</h1>
         <Link
           href="/shop"
-          className="mt-6 inline-block font-sans text-[0.7rem] tracking-[0.2em] text-gold-deep uppercase"
+          className="mt-6 inline-block font-sans text-[0.7rem] tracking-[0.2em] text-burnt-orange uppercase"
         >
           Browse the collection
         </Link>
@@ -216,11 +216,11 @@ export function CheckoutForm({ cashOnDeliveryFees }: { cashOnDeliveryFees: CashO
             </span>
           </span>
         </label>
-        {error ? <p className="text-sm text-gold-deep">{error}</p> : null}
+        {error ? <p className="text-sm text-burnt-orange">{error}</p> : null}
         <button
           type="submit"
           disabled={pending}
-          className="flex min-h-12 w-full flex-wrap items-center justify-center gap-x-2 bg-ink px-3 py-3 font-sans text-[0.68rem] tracking-[0.12em] text-ivory uppercase hover:bg-gold-deep disabled:opacity-60 sm:text-[0.72rem] sm:tracking-[0.2em]"
+          className="flex min-h-12 w-full flex-wrap items-center justify-center gap-x-2 bg-ink px-3 py-3 font-sans text-[0.68rem] tracking-[0.12em] text-ivory uppercase hover:bg-burnt-orange disabled:opacity-60 sm:text-[0.72rem] sm:tracking-[0.2em]"
         >
           <span>{pending ? "Placing order…" : "Place order"}</span>
           <span className="whitespace-nowrap tracking-normal">{formatPrice(total)}</span>

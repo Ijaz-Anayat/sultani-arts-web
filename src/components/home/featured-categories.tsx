@@ -36,7 +36,7 @@ export async function FeaturedCategories({ compact = false }: { compact?: boolea
           <RevealOnScroll>
             <div className="mb-8 flex flex-col justify-between gap-3 sm:mb-12 md:mb-16 md:flex-row md:items-end md:gap-4">
               <div>
-                <p className="font-sans text-[0.65rem] tracking-[0.22em] text-gold-deep uppercase sm:text-[0.7rem] sm:tracking-[0.36em]">
+                <p className="font-sans text-[0.65rem] tracking-[0.22em] text-burnt-orange uppercase sm:text-[0.7rem] sm:tracking-[0.36em]">
                   The Gallery
                 </p>
                 <h2 className="mt-2 font-serif text-3xl sm:mt-3 sm:text-4xl md:text-5xl">

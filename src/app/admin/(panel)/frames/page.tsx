@@ -6,7 +6,7 @@ export default async function AdminFramesPage() {
 
   return (
     <div>
-      <p className="font-sans text-[0.65rem] tracking-[0.28em] text-gold-deep uppercase">
+      <p className="font-sans text-[0.65rem] tracking-[0.28em] text-burnt-orange uppercase">
         Catalogue
       </p>
       <h1 className="mt-2 mb-8 font-serif text-4xl">Frames</h1>

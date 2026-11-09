@@ -10,7 +10,7 @@ export default async function AdminAnalyticsPage() {
 
   return (
     <div>
-      <p className="font-sans text-[0.65rem] tracking-[0.28em] text-gold-deep uppercase">
+      <p className="font-sans text-[0.65rem] tracking-[0.28em] text-burnt-orange uppercase">
         Store insights
       </p>
       <h1 className="mt-2 font-serif text-4xl">Visitor analytics</h1>

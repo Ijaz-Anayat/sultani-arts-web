@@ -303,12 +303,12 @@ export function ProductForm({ categories, product }: Props) {
         Visible on shop
       </label>
 
-      {error ? <p className="text-sm text-gold-deep">{error}</p> : null}
+      {error ? <p className="text-sm text-burnt-orange">{error}</p> : null}
 
       <button
         type="submit"
         disabled={pending || uploading}
-        className="bg-ink px-8 py-3.5 font-sans text-[0.72rem] tracking-[0.24em] text-ivory uppercase transition-colors hover:bg-gold-deep disabled:opacity-60"
+        className="bg-ink px-8 py-3.5 font-sans text-[0.72rem] tracking-[0.24em] text-ivory uppercase transition-colors hover:bg-burnt-orange disabled:opacity-60"
       >
         {pending ? "Saving…" : product ? "Update product" : "Create product"}
       </button>

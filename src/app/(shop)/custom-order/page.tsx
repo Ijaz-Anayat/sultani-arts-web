@@ -22,7 +22,7 @@ export default async function CustomOrderPage() {
         <RevealOnScroll>
           <div className="mb-10 grid gap-7 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-center">
             <div className="max-w-2xl">
-              <p className="font-sans text-[0.65rem] tracking-[0.28em] text-gold-deep uppercase">
+              <p className="font-sans text-[0.65rem] tracking-[0.28em] text-burnt-orange uppercase">
                 Made for your space
               </p>
               <h1 className="mt-2 font-serif text-4xl sm:text-5xl">Custom calligraphy</h1>

@@ -31,8 +31,8 @@ export function Newsletter() {
   return (
     <section className="px-4 pb-14 sm:px-5 sm:pb-20 md:px-8 md:pb-28">
       <RevealOnScroll>
-        <div className="mx-auto max-w-[1400px] border border-line bg-cream px-4 py-12 text-center sm:px-6 sm:py-16 md:px-16">
-        <p className="font-sans text-[0.65rem] tracking-[0.22em] text-gold-deep uppercase sm:text-[0.7rem] sm:tracking-[0.36em]">
+        <div className="mx-auto max-w-[1400px] border border-line bg-sage px-4 py-12 text-center sm:px-6 sm:py-16 md:px-16">
+        <p className="font-sans text-[0.65rem] tracking-[0.22em] text-burnt-orange uppercase sm:text-[0.7rem] sm:tracking-[0.36em]">
           The atelier letter
         </p>
         <h2 className="mt-3 font-serif text-3xl sm:mt-4 md:text-5xl">
@@ -44,7 +44,7 @@ export function Newsletter() {
         </p>
 
         {submitted ? (
-          <p className="mt-8 font-serif text-xl text-gold-deep sm:mt-10">
+          <p className="mt-8 font-serif text-xl text-burnt-orange sm:mt-10">
             You are on the list. Welcome to the atelier.
           </p>
         ) : (
@@ -63,13 +63,13 @@ export function Newsletter() {
             <button
               type="submit"
               disabled={pending}
-              className="bg-ink px-7 py-3.5 font-sans text-[0.68rem] tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-gold-deep sm:text-[0.72rem] sm:tracking-[0.26em] disabled:opacity-60"
+              className="bg-ink px-7 py-3.5 font-sans text-[0.68rem] tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-burnt-orange sm:text-[0.72rem] sm:tracking-[0.26em] disabled:opacity-60"
             >
               {pending ? "Saving…" : "Subscribe"}
             </button>
           </form>
         )}
-        {error ? <p className="mt-3 text-sm text-gold-deep">{error}</p> : null}
+        {error ? <p className="mt-3 text-sm text-burnt-orange">{error}</p> : null}
         </div>
       </RevealOnScroll>
     </section>

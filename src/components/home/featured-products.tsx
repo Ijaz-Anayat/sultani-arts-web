@@ -20,12 +20,12 @@ export async function FeaturedProducts({ limit = 8, compact = false }: Props) {
   return (
     <section
       id="collection"
-      className={`bg-cream/60 px-4 sm:px-5 md:px-8 ${compact ? "py-12 md:py-16" : "py-14 md:py-28"}`}
+      className={`bg-sage/70 px-4 sm:px-5 md:px-8 ${compact ? "py-12 md:py-16" : "py-14 md:py-28"}`}
     >
       <div className="mx-auto max-w-[1200px]">
         <RevealOnScroll>
           <div className={`mb-8 text-center ${compact ? "sm:mb-8" : "sm:mb-12 md:mb-16"}`}>
-            <p className="font-sans text-[0.65rem] tracking-[0.22em] text-gold-deep uppercase sm:text-[0.7rem] sm:tracking-[0.36em]">
+            <p className="font-sans text-[0.65rem] tracking-[0.22em] text-burnt-orange uppercase sm:text-[0.7rem] sm:tracking-[0.36em]">
               Selected works
             </p>
             <h2 className="mt-2 font-serif text-3xl sm:mt-3 sm:text-4xl md:text-5xl">

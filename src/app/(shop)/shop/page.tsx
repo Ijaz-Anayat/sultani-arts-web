@@ -48,7 +48,7 @@ export default async function ShopPage({
       <div className="mx-auto max-w-[1400px]">
         <RevealOnScroll>
           <div>
-            <p className="font-sans text-[0.65rem] tracking-[0.28em] text-gold-deep uppercase">
+            <p className="font-sans text-[0.65rem] tracking-[0.28em] text-burnt-orange uppercase">
               The collection
             </p>
             <h1 className="mt-2 font-serif text-4xl sm:text-5xl">

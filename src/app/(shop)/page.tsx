@@ -41,7 +41,7 @@ export default function Home() {
               href="/categories"
               className="block border border-line bg-cream/50 px-6 py-8 transition-colors hover:border-gold"
             >
-              <p className="font-sans text-[0.62rem] tracking-[0.22em] text-gold-deep uppercase">
+              <p className="font-sans text-[0.62rem] tracking-[0.22em] text-burnt-orange uppercase">
                 Explore
               </p>
               <h2 className="mt-2 font-serif text-2xl">Categories</h2>
@@ -52,7 +52,7 @@ export default function Home() {
               href="/about"
               className="block border border-line bg-cream/50 px-6 py-8 transition-colors hover:border-gold"
             >
-              <p className="font-sans text-[0.62rem] tracking-[0.22em] text-gold-deep uppercase">
+              <p className="font-sans text-[0.62rem] tracking-[0.22em] text-burnt-orange uppercase">
                 Discover
               </p>
               <h2 className="mt-2 font-serif text-2xl">Our story</h2>
@@ -63,7 +63,7 @@ export default function Home() {
               href="/contact"
               className="block border border-line bg-cream/50 px-6 py-8 transition-colors hover:border-gold"
             >
-              <p className="font-sans text-[0.62rem] tracking-[0.22em] text-gold-deep uppercase">
+              <p className="font-sans text-[0.62rem] tracking-[0.22em] text-burnt-orange uppercase">
                 Connect
               </p>
               <h2 className="mt-2 font-serif text-2xl">Contact</h2>

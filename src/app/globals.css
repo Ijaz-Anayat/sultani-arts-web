@@ -8,6 +8,10 @@
   --gold: #b0894f;
   --gold-deep: #8c6a35;
   --gold-soft: #c4a574;
+  --burnt-orange: #b6532d;
+  --burnt-orange-deep: #9a4022;
+  --olive: #465447;
+  --sage: #e5e8df;
   --ink: #1c1814;
   --ink-soft: #3f3831;
   --muted: #7a7168;
@@ -23,6 +27,10 @@
   --color-gold: var(--gold);
   --color-gold-deep: var(--gold-deep);
   --color-gold-soft: var(--gold-soft);
+  --color-burnt-orange: var(--burnt-orange);
+  --color-burnt-orange-deep: var(--burnt-orange-deep);
+  --color-olive: var(--olive);
+  --color-sage: var(--sage);
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
   --color-muted: var(--muted);

@@ -34,7 +34,7 @@ export function AdminLoginForm() {
       <div className="w-full max-w-md border border-line bg-cream/60 px-6 py-10 sm:px-10">
         <div className="mb-8 flex flex-col items-center text-center">
           <Logo variant="stacked" />
-          <p className="mt-6 font-sans text-[0.68rem] tracking-[0.28em] text-gold-deep uppercase">
+          <p className="mt-6 font-sans text-[0.68rem] tracking-[0.28em] text-burnt-orange uppercase">
             Atelier access
           </p>
           <h1 className="mt-2 font-serif text-3xl">Admin login</h1>
@@ -78,11 +78,11 @@ export function AdminLoginForm() {
               {password.length} character{password.length === 1 ? "" : "s"}
             </p>
           </label>
-          {error ? <p className="font-sans text-sm text-gold-deep">{error}</p> : null}
+          {error ? <p className="font-sans text-sm text-burnt-orange">{error}</p> : null}
           <button
             type="submit"
             disabled={pending}
-            className="w-full bg-ink py-3.5 font-sans text-[0.72rem] tracking-[0.24em] text-ivory uppercase transition-colors hover:bg-gold-deep disabled:opacity-60"
+            className="w-full bg-ink py-3.5 font-sans text-[0.72rem] tracking-[0.24em] text-ivory uppercase transition-colors hover:bg-burnt-orange disabled:opacity-60"
           >
             {pending ? "Signing in…" : "Enter dashboard"}
           </button>

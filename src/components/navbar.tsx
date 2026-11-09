@@ -59,7 +59,7 @@ export function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="relative font-sans text-[0.78rem] font-medium tracking-[0.22em] text-ink-soft uppercase transition-colors hover:text-gold-deep after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-gold after:transition-all hover:after:w-full"
+                className="relative font-sans text-[0.78rem] font-medium tracking-[0.22em] text-ink-soft uppercase transition-colors hover:text-burnt-orange after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-gold after:transition-all hover:after:w-full"
               >
                 {link.label}
               </Link>
@@ -70,14 +70,14 @@ export function Navbar() {
             <button
               type="button"
               onClick={() => setSearchOpen((open) => !open)}
-              className="flex h-10 w-10 items-center justify-center text-ink-soft transition-colors hover:text-gold-deep"
+              className="flex h-10 w-10 items-center justify-center text-ink-soft transition-colors hover:text-burnt-orange"
               aria-label="Search"
             >
               <Search size={18} strokeWidth={1.5} />
             </button>
             <Link
               href="/admin/login"
-              className="hidden h-10 w-10 items-center justify-center text-ink-soft transition-colors hover:text-gold-deep sm:flex"
+              className="hidden h-10 w-10 items-center justify-center text-ink-soft transition-colors hover:text-burnt-orange sm:flex"
               aria-label="Studio login"
             >
               <User size={18} strokeWidth={1.5} />
@@ -85,7 +85,7 @@ export function Navbar() {
             <button
               type="button"
               onClick={() => setCartOpen(true)}
-              className="relative flex h-10 w-10 items-center justify-center text-ink-soft transition-colors hover:text-gold-deep"
+              className="relative flex h-10 w-10 items-center justify-center text-ink-soft transition-colors hover:text-burnt-orange"
               aria-label="Cart"
             >
               <ShoppingBag size={18} strokeWidth={1.5} />
@@ -165,7 +165,7 @@ export function Navbar() {
               key={link.href}
               href={link.href}
               onClick={() => setMenuOpen(false)}
-              className="font-serif text-2xl text-ink transition-colors hover:text-gold-deep sm:text-3xl"
+              className="font-serif text-2xl text-ink transition-colors hover:text-burnt-orange sm:text-3xl"
             >
               {link.label}
             </Link>
@@ -184,7 +184,7 @@ export function Navbar() {
             <button
               type="button"
               onClick={() => signOut({ callbackUrl: "/" })}
-              className="flex items-center gap-3 font-sans text-[0.75rem] tracking-[0.22em] text-gold-deep uppercase"
+              className="flex items-center gap-3 font-sans text-[0.75rem] tracking-[0.22em] text-burnt-orange uppercase"
             >
               Logout
             </button>
@@ -262,7 +262,7 @@ export function Navbar() {
                     <button
                       type="button"
                       onClick={() => removeFromCart(item.productId, item.size, item.frameId)}
-                      className="mt-1 text-xs tracking-wide text-gold-deep uppercase hover:underline"
+                      className="mt-1 text-xs tracking-wide text-burnt-orange uppercase hover:underline"
                     >
                       Remove
                     </button>
@@ -281,7 +281,7 @@ export function Navbar() {
             <Link
               href="/checkout"
               onClick={() => setCartOpen(false)}
-              className="block w-full bg-ink py-3.5 text-center font-sans text-xs tracking-[0.28em] text-ivory uppercase transition-colors hover:bg-gold-deep"
+              className="block w-full bg-ink py-3.5 text-center font-sans text-xs tracking-[0.28em] text-ivory uppercase transition-colors hover:bg-burnt-orange"
             >
               Checkout
             </Link>

@@ -53,7 +53,7 @@ function ProductCardTitle({
         {clamped ? (
           <Link
             href={href}
-            className="inline-block font-sans text-[0.58rem] tracking-[0.14em] text-gold-deep uppercase sm:text-[0.62rem]"
+            className="inline-block font-sans text-[0.58rem] tracking-[0.14em] text-burnt-orange uppercase sm:text-[0.62rem]"
           >
             View more
           </Link>
@@ -125,29 +125,29 @@ export function ProductCard({
         <button
           type="button"
           onClick={() => toggleWishlist(product._id)}
-          className={`absolute top-2 right-2 flex h-9 w-9 items-center justify-center bg-ivory/90 text-ink transition-colors hover:text-gold-deep sm:top-3 sm:right-3 sm:h-10 sm:w-10 ${
-            saved ? "text-gold-deep" : ""
+          className={`absolute top-2 right-2 flex h-9 w-9 items-center justify-center bg-ivory/90 text-ink transition-colors hover:text-burnt-orange sm:top-3 sm:right-3 sm:h-10 sm:w-10 ${
+            saved ? "text-burnt-orange" : ""
           }`}
           aria-label={saved ? "Remove from wishlist" : "Add to wishlist"}
         >
           <Heart
             size={16}
             strokeWidth={1.5}
-            className={saved ? "fill-gold-deep" : ""}
+            className={saved ? "fill-burnt-orange" : ""}
           />
         </button>
         {canAdd ? (
           <button
             type="button"
             onClick={handleAdd}
-            className="absolute inset-x-2 bottom-2 hidden bg-ink py-2.5 font-sans text-[0.62rem] tracking-[0.16em] text-ivory uppercase transition-all duration-300 hover:bg-gold-deep sm:inset-x-4 sm:bottom-4 sm:block sm:translate-y-0 sm:py-3 sm:text-[0.68rem] sm:tracking-[0.26em] sm:opacity-100 md:translate-y-3 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100"
+            className="absolute inset-x-2 bottom-2 hidden bg-ink py-2.5 font-sans text-[0.62rem] tracking-[0.16em] text-ivory uppercase transition-all duration-300 hover:bg-burnt-orange sm:inset-x-4 sm:bottom-4 sm:block sm:translate-y-0 sm:py-3 sm:text-[0.68rem] sm:tracking-[0.26em] sm:opacity-100 md:translate-y-3 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100"
           >
             Add to Cart
           </button>
         ) : null}
       </div>
       <div className="flex flex-1 flex-col">
-        <p className="truncate font-sans text-[0.58rem] tracking-[0.12em] text-gold-deep uppercase sm:text-[0.65rem] sm:tracking-[0.22em]">
+        <p className="truncate font-sans text-[0.58rem] tracking-[0.12em] text-burnt-orange uppercase sm:text-[0.65rem] sm:tracking-[0.22em]">
           {categoryName}
         </p>
         <div className="mt-1">
@@ -171,7 +171,7 @@ export function ProductCard({
             <button
               type="button"
               onClick={handleAdd}
-              className="mt-3 w-full bg-ink py-2.5 font-sans text-[0.62rem] tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-gold-deep sm:hidden"
+              className="mt-3 w-full bg-ink py-2.5 font-sans text-[0.62rem] tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-burnt-orange sm:hidden"
             >
               Add to Cart
             </button>

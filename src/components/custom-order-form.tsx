@@ -96,10 +96,10 @@ export function CustomOrderForm({ options }: Props) {
   if (orderId) {
     return (
       <section className="border border-line bg-cream/50 px-6 py-14 text-center sm:px-10">
-        <span className="mx-auto flex h-11 w-11 items-center justify-center border border-gold text-gold-deep">
+        <span className="mx-auto flex h-11 w-11 items-center justify-center border border-gold text-burnt-orange">
           <Check size={20} />
         </span>
-        <p className="mt-5 font-sans text-[0.65rem] tracking-[0.28em] text-gold-deep uppercase">
+        <p className="mt-5 font-sans text-[0.65rem] tracking-[0.28em] text-burnt-orange uppercase">
           Commission received
         </p>
         <h2 className="mt-2 font-serif text-3xl">We will be in touch</h2>
@@ -197,7 +197,7 @@ export function CustomOrderForm({ options }: Props) {
                     onClick={() => setFrameId(frame._id)}
                     className={`border px-3 py-3 text-left transition-colors ${active ? "border-ink bg-cream" : "border-line bg-ivory hover:border-gold"}`}
                   >
-                    <FrameIcon size={16} strokeWidth={1.5} className="text-gold-deep" />
+                    <FrameIcon size={16} strokeWidth={1.5} className="text-burnt-orange" />
                     <span className="mt-2 block font-serif text-base">{frame.color}</span>
                     <span className="mt-1 block font-sans text-[0.62rem] text-muted">Fits {dimensionsForSize(frame.sizeLabel)}</span>
                     <span className="mt-2 block font-sans text-sm">+ {formatPrice(frame.price)}</span>
@@ -312,12 +312,12 @@ export function CustomOrderForm({ options }: Props) {
               />
             </label>
           )}
-          {uploadError ? <p role="alert" className="mt-2 font-sans text-sm text-gold-deep">{uploadError}</p> : null}
+          {uploadError ? <p role="alert" className="mt-2 font-sans text-sm text-burnt-orange">{uploadError}</p> : null}
         </div>
       </section>
 
       <aside className="order-2 border border-line bg-cream/40 p-5 sm:p-6 lg:sticky lg:top-28 lg:order-none lg:self-start">
-        <p className="font-sans text-[0.62rem] tracking-[0.22em] text-gold-deep uppercase">Order summary</p>
+        <p className="font-sans text-[0.62rem] tracking-[0.22em] text-burnt-orange uppercase">Order summary</p>
         <h2 className="mt-2 font-serif text-2xl">Your commission</h2>
         <dl className="mt-5 space-y-3 border-y border-line py-4 font-sans text-sm">
           <div className="flex justify-between gap-4"><dt className="text-muted">Type</dt><dd className="text-right">{selectedType.name}</dd></div>
@@ -345,8 +345,8 @@ export function CustomOrderForm({ options }: Props) {
           <input required maxLength={100} autoComplete="address-level2" placeholder="City" value={customer.city} onChange={(event) => setCustomer({ ...customer, city: event.target.value })} className="border border-line bg-ivory px-4 py-3 outline-none focus:border-gold" />
           <input required maxLength={300} autoComplete="street-address" placeholder="Delivery address" value={customer.address} onChange={(event) => setCustomer({ ...customer, address: event.target.value })} className="border border-line bg-ivory px-4 py-3 outline-none focus:border-gold sm:col-span-2" />
         </div>
-        {error ? <p role="alert" className="mt-4 font-sans text-sm text-gold-deep">{error}</p> : null}
-        <button type="submit" disabled={pending || uploadingReference || (frameEnabled && availableFrames.length > 0 && !selectedFrame)} className="mt-5 w-full bg-ink px-5 py-3.5 font-sans text-[0.68rem] tracking-[0.2em] text-ivory uppercase transition-colors hover:bg-gold-deep disabled:cursor-not-allowed disabled:opacity-55 sm:w-auto">
+        {error ? <p role="alert" className="mt-4 font-sans text-sm text-burnt-orange">{error}</p> : null}
+        <button type="submit" disabled={pending || uploadingReference || (frameEnabled && availableFrames.length > 0 && !selectedFrame)} className="mt-5 w-full bg-ink px-5 py-3.5 font-sans text-[0.68rem] tracking-[0.2em] text-ivory uppercase transition-colors hover:bg-burnt-orange disabled:cursor-not-allowed disabled:opacity-55 sm:w-auto">
           {pending ? "Submitting commission…" : `Place custom order · ${formatPrice(total)}`}
         </button>
       </section>

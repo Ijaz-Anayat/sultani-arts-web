@@ -19,7 +19,7 @@ export default function ContactPage() {
       <section className="px-4 py-12 sm:px-5 sm:py-16 md:px-8">
         <div className="mx-auto max-w-[900px]">
           <RevealOnScroll>
-            <p className="font-sans text-[0.65rem] tracking-[0.28em] text-gold-deep uppercase">
+            <p className="font-sans text-[0.65rem] tracking-[0.28em] text-burnt-orange uppercase">
               Get in touch
             </p>
             <h1 className="mt-2 font-serif text-4xl sm:text-5xl">Contact us</h1>
@@ -32,7 +32,7 @@ export default function ContactPage() {
           <RevealOnScroll delay={80}>
             <ul className="mt-10 space-y-5 border border-line bg-cream/40 p-6 sm:p-8">
               <li className="flex items-start gap-3">
-                <MapPin size={18} className="mt-0.5 shrink-0 text-gold-deep" />
+                <MapPin size={18} className="mt-0.5 shrink-0 text-burnt-orange" />
                 <div>
                   <p className="font-sans text-[0.62rem] tracking-[0.2em] text-muted uppercase">
                     Location
@@ -41,7 +41,7 @@ export default function ContactPage() {
                 </div>
               </li>
               <li className="flex items-start gap-3">
-                <Phone size={18} className="mt-0.5 shrink-0 text-gold-deep" />
+                <Phone size={18} className="mt-0.5 shrink-0 text-burnt-orange" />
                 <div>
                   <p className="font-sans text-[0.62rem] tracking-[0.2em] text-muted uppercase">
                     Phone / WhatsApp
@@ -50,21 +50,21 @@ export default function ContactPage() {
                     href={SITE_CONTACT.whatsappUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-1 inline-block font-serif text-xl hover:text-gold-deep"
+                    className="mt-1 inline-block font-serif text-xl hover:text-burnt-orange"
                   >
                     {SITE_CONTACT.phoneDisplay}
                   </a>
                 </div>
               </li>
               <li className="flex items-start gap-3">
-                <Mail size={18} className="mt-0.5 shrink-0 text-gold-deep" />
+                <Mail size={18} className="mt-0.5 shrink-0 text-burnt-orange" />
                 <div>
                   <p className="font-sans text-[0.62rem] tracking-[0.2em] text-muted uppercase">
                     Email
                   </p>
                   <a
                     href={`mailto:${SITE_CONTACT.email}`}
-                    className="mt-1 inline-block break-all font-serif text-xl hover:text-gold-deep"
+                    className="mt-1 inline-block break-all font-serif text-xl hover:text-burnt-orange"
                   >
                     {SITE_CONTACT.email}
                   </a>

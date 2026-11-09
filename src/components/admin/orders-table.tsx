@@ -100,7 +100,7 @@ export function OrdersTable({ orders }: { orders: OrderDTO[] }) {
         className="border border-line bg-cream/50 p-4 sm:p-5"
       >
         <div className="mb-4 flex items-center gap-2">
-          <SlidersHorizontal size={16} strokeWidth={1.6} className="text-gold-deep" />
+          <SlidersHorizontal size={16} strokeWidth={1.6} className="text-burnt-orange" />
           <p className="font-sans text-[0.65rem] tracking-[0.2em] text-muted uppercase">
             Find and filter orders
           </p>
@@ -164,7 +164,7 @@ export function OrdersTable({ orders }: { orders: OrderDTO[] }) {
                 setSearch("");
                 setStatusFilter("all");
               }}
-              className="inline-flex items-center gap-1.5 font-sans text-xs text-gold-deep transition-colors hover:text-ink"
+              className="inline-flex items-center gap-1.5 font-sans text-xs text-burnt-orange transition-colors hover:text-ink"
             >
               <X size={14} aria-hidden="true" />
               Clear filters

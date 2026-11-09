@@ -47,7 +47,7 @@ export function AdminShell({
                 className={`flex items-center gap-3 px-3 py-2.5 font-sans text-[0.72rem] tracking-[0.16em] uppercase transition-colors ${
                   active
                     ? "bg-ink text-ivory"
-                    : "text-ink-soft hover:bg-parchment hover:text-gold-deep"
+                    : "text-ink-soft hover:bg-parchment hover:text-burnt-orange"
                 }`}
               >
                 <Icon size={16} strokeWidth={1.5} />
@@ -61,7 +61,7 @@ export function AdminShell({
           <button
             type="button"
             onClick={() => signOut({ callbackUrl: "/" })}
-            className="mt-3 flex items-center gap-2 font-sans text-[0.68rem] tracking-[0.18em] text-gold-deep uppercase hover:underline"
+            className="mt-3 flex items-center gap-2 font-sans text-[0.68rem] tracking-[0.18em] text-burnt-orange uppercase hover:underline"
           >
             <LogOut size={14} />
             Logout
@@ -75,7 +75,7 @@ export function AdminShell({
           <button
             type="button"
             onClick={() => signOut({ callbackUrl: "/" })}
-            className="font-sans text-[0.65rem] tracking-[0.18em] text-gold-deep uppercase"
+            className="font-sans text-[0.65rem] tracking-[0.18em] text-burnt-orange uppercase"
           >
             Logout
           </button>

@@ -121,7 +121,7 @@ export function CategoriesManager({ categories }: { categories: CategoryDTO[] })
                           type="button"
                           onClick={() => saveEdit(category._id)}
                           disabled={editPending}
-                          className="font-sans text-[0.65rem] tracking-[0.16em] text-ink uppercase hover:text-gold-deep disabled:opacity-60"
+                          className="font-sans text-[0.65rem] tracking-[0.16em] text-ink uppercase hover:text-burnt-orange disabled:opacity-60"
                         >
                           {editPending ? "Saving…" : "Save"}
                         </button>
@@ -173,11 +173,11 @@ export function CategoriesManager({ categories }: { categories: CategoryDTO[] })
             className="mt-2 w-full border border-line bg-ivory px-4 py-3 outline-none focus:border-gold"
           />
         </label>
-        {error ? <p className="mt-3 text-sm text-gold-deep">{error}</p> : null}
+        {error ? <p className="mt-3 text-sm text-burnt-orange">{error}</p> : null}
         <button
           type="submit"
           disabled={pending}
-          className="mt-5 w-full bg-ink py-3 font-sans text-[0.68rem] tracking-[0.2em] text-ivory uppercase hover:bg-gold-deep disabled:opacity-60"
+          className="mt-5 w-full bg-ink py-3 font-sans text-[0.68rem] tracking-[0.2em] text-ivory uppercase hover:bg-burnt-orange disabled:opacity-60"
         >
           {pending ? "Saving…" : "Add"}
         </button>

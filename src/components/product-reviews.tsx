@@ -35,7 +35,7 @@ export function ProductReviews({ reviews }: { reviews: ReviewDTO[] }) {
       <RevealOnScroll>
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="font-sans text-[0.62rem] tracking-[0.28em] text-gold-deep uppercase">
+            <p className="font-sans text-[0.62rem] tracking-[0.28em] text-burnt-orange uppercase">
               Collector notes
             </p>
             <h2 className="mt-2 font-serif text-2xl sm:text-3xl">Reviews</h2>

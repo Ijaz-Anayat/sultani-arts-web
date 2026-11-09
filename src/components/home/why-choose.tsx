@@ -10,7 +10,7 @@ export function WhyChoose() {
       <div className="mx-auto max-w-[1400px]">
         <RevealOnScroll>
           <div className="mx-auto max-w-2xl px-2 text-center">
-          <p className="font-sans text-[0.65rem] tracking-[0.22em] text-gold-deep uppercase sm:text-[0.7rem] sm:tracking-[0.36em]">
+          <p className="font-sans text-[0.65rem] tracking-[0.22em] text-burnt-orange uppercase sm:text-[0.7rem] sm:tracking-[0.36em]">
             Why Sultani
           </p>
           <h2 className="mt-2 font-serif text-3xl text-pretty sm:mt-3 sm:text-4xl md:text-5xl">
@@ -24,11 +24,11 @@ export function WhyChoose() {
             const Icon = icons[index];
             return (
               <RevealOnScroll key={benefit.title} delay={index * 80}>
-                <article className="h-full bg-ivory px-5 py-8 transition-colors hover:bg-cream/70 sm:px-8 sm:py-10">
+                <article className="h-full bg-ivory px-5 py-8 transition-colors hover:bg-sage sm:px-8 sm:py-10">
                 <Icon
                   size={22}
                   strokeWidth={1.4}
-                  className="text-gold-deep"
+                  className="text-burnt-orange"
                 />
                 <h3 className="mt-6 font-serif text-2xl">{benefit.title}</h3>
                 <p className="mt-3 font-sans text-sm leading-7 text-muted">
